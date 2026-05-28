@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GéoQuiz — Capitales du Monde</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #080818;
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(90,40,160,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 60% at 80% 80%, rgba(20,60,120,0.35) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle { 0% { opacity: 0.08; } 100% { opacity: 0.9; } }
+
+    .screen { display: none; position: relative; z-index: 1; min-height: 100vh; padding: 20px; }
+    .screen.active { display: block; }
+
+    /* ── HOME ── */
+    #screen-home { max-width: 860px; margin: 0 auto; }
+
+    .home-hero {
+      text-align: center;
+      padding: 50px 0 36px;
+    }
+
+    .home-title {
+      font-size: clamp(2.6rem, 7vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 30%, #ef4444 65%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .home-sub {
+      color: rgba(255,255,255,0.55);
+      font-size: 1.05rem;
+      margin-bottom: 22px;
+    }
+
+    .home-badges {
+      display: inline-flex;
+      gap: 20px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      padding: 10px 26px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.3);
+      margin: 8px 0 22px;
+    }
+
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-bottom: 50px;
+    }
+
+    .level-card {
+      position: relative;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+      padding: 30px 18px 22px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      overflow: hidden;
+    }
+
+    .level-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--glow, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .level-card:hover:not(.locked) {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px var(--shadow, rgba(0,0,0,0.3));
+      border-color: var(--accent, rgba(255,255,255,0.3));
+    }
+
+    .level-card:hover:not(.locked)::after { opacity: 0.06; }
+
+    .level-card.locked { opacity: 0.38; cursor: not-allowed; filter: grayscale(0.5); }
+
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: inherit;
+    }
+
+    .level-emoji { font-size: 3rem; display: block; margin-bottom: 14px; }
+    .level-name { font-size: 1.15rem; font-weight: 800; margin-bottom: 5px; }
+    .level-desc { font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-bottom: 18px; line-height: 1.4; }
+
+    .level-stars { display: flex; justify-content: center; gap: 3px; font-size: 1.1rem; margin-bottom: 8px; }
+    .star-off { opacity: 0.15; }
+
+    .level-info { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
+    .level-best { font-size: 0.72rem; color: rgba(255,255,255,0.28); margin-top: 3px; }
+
+    /* ── GAME ── */
+    #screen-game { max-width: 680px; margin: 0 auto; }
+
+    .game-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 20px;
+      gap: 12px;
+    }
+
+    .lives { display: flex; gap: 5px; font-size: 1.4rem; }
+    .life { transition: all 0.3s ease; display: inline-block; }
+    .life.lost { opacity: 0.15; filter: grayscale(1); transform: scale(0.75); }
+
+    .hud-score { text-align: center; }
+    .hud-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2.5px; color: rgba(255,255,255,0.35); }
+    .hud-value { font-size: 1.9rem; font-weight: 900; color: #fbbf24; line-height: 1.1; }
+
+    .hud-streak { text-align: right; min-width: 70px; }
+    .streak-val { font-size: 1.05rem; font-weight: 700; color: rgba(255,255,255,0.5); }
+    .streak-val.hot { color: #f97316; animation: heartbeat 0.4s ease; }
+    @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.35); } }
+
+    .prog-wrap {
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      height: 5px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #4ade80, #60a5fa);
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .timer-wrap { margin-bottom: 22px; }
+    .timer-bar {
+      height: 4px;
+      border-radius: 4px;
+      transition: width 0.95s linear, background 0.5s;
+    }
+    .timer-txt {
+      text-align: right;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+
+    .q-card {
+      background: rgba(255,255,255,0.065);
+      border: 1.5px solid rgba(255,255,255,0.11);
+      border-radius: 26px;
+      padding: 44px 32px 36px;
+      text-align: center;
+      margin-bottom: 20px;
+      backdrop-filter: blur(12px);
+      animation: cardIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes cardIn {
+      from { transform: translateY(20px) scale(0.96); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .q-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 14px;
+    }
+    .q-num { font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-bottom: 22px; }
+    .q-flag { font-size: 4.5rem; display: block; margin-bottom: 18px; line-height: 1; }
+    .q-country { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 900; letter-spacing: -0.5px; }
+
+    .opts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      margin-bottom: 16px;
+    }
+
+    .opt-btn {
+      background: rgba(255,255,255,0.065);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 18px 14px;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      font-family: inherit;
+      line-height: 1.3;
+    }
+    .opt-btn:hover:not(:disabled) {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.28);
+      transform: translateY(-2px);
+    }
+    .opt-btn:disabled { cursor: default; }
+
+    .opt-btn.correct {
+      background: rgba(74,222,128,0.18);
+      border-color: #4ade80;
+      color: #4ade80;
+      animation: popCorrect 0.45s ease;
+    }
+    .opt-btn.wrong {
+      background: rgba(248,113,113,0.18);
+      border-color: #f87171;
+      color: #f87171;
+      animation: shakeWrong 0.4s ease;
+    }
+    @keyframes popCorrect {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shakeWrong {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-7px); }
+      50%     { transform: translateX(7px); }
+      80%     { transform: translateX(-4px); }
+    }
+
+    .hint-line {
+      text-align: center;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.45);
+      min-height: 22px;
+    }
+
+    /* ── FEEDBACK OVERLAY ── */
+    .feedback-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 300;
+    }
+    .feedback-emoji {
+      font-size: 7rem;
+      opacity: 0;
+      transform: scale(0.3);
+      transition: none;
+    }
+    .feedback-emoji.pop {
+      animation: feedPop 0.75s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes feedPop {
+      0%   { opacity: 1; transform: scale(0.3); }
+      40%  { opacity: 1; transform: scale(1.15); }
+      70%  { opacity: 1; transform: scale(1.0); }
+      100% { opacity: 0; transform: scale(0.8) translateY(-40px); }
+    }
+
+    /* ── RESULT ── */
+    #screen-result { max-width: 580px; margin: 0 auto; text-align: center; padding-top: 60px; }
+
+    .res-emoji { font-size: 5rem; display: block; margin-bottom: 18px; animation: bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes bounceIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+    .res-title { font-size: 2.4rem; font-weight: 900; margin-bottom: 8px; }
+    .res-sub { color: rgba(255,255,255,0.55); margin-bottom: 30px; font-size: 1rem; }
+
+    .res-stars {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      font-size: 3.2rem;
+      margin-bottom: 32px;
+    }
+    .res-star {
+      display: inline-block;
+      animation: starBoom 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes starBoom {
+      from { transform: scale(0) rotate(-30deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.065);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      padding: 20px 10px;
+    }
+    .stat-val { font-size: 2rem; font-weight: 900; color: #fbbf24; }
+    .stat-lbl { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+    /* ── GAMEOVER ── */
+    #screen-gameover { max-width: 500px; margin: 0 auto; text-align: center; padding-top: 90px; }
+
+    /* ── BUTTONS ── */
+    .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #4ade80, #22d3ee);
+      color: #080818;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(74,222,128,0.35); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.15);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.16); transform: translateY(-3px); }
+
+    /* ── CONFETTI ── */
+    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
+    .confetti-piece {
+      position: absolute;
+      top: -16px;
+      border-radius: 2px;
+      animation: cFall linear forwards;
+    }
+    @keyframes cFall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .opts-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .game-topbar { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="feedback-overlay"><div class="feedback-emoji" id="feedback"></div></div>
+<div class="confetti-wrap" id="confetti"></div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div id="home-content"></div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="screen-game">
+  <div class="game-topbar">
+    <div class="lives" id="lives"></div>
+    <div class="hud-score">
+      <div class="hud-label">Score</div>
+      <div class="hud-value" id="hud-score">0</div>
+    </div>
+    <div class="hud-streak">
+      <div class="hud-label">Série</div>
+      <div class="streak-val" id="hud-streak">—</div>
+    </div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-fill" id="prog-fill" style="width:0%"></div>
+  </div>
+
+  <div class="timer-wrap">
+    <div class="timer-bar" id="timer-bar" style="width:100%"></div>
+    <div class="timer-txt" id="timer-txt">20s</div>
+  </div>
+
+  <div class="q-card" id="q-card">
+    <div class="q-label">Quelle est la capitale de…</div>
+    <div class="q-num" id="q-num">Question 1 / 20</div>
+    <span class="q-flag" id="q-flag">🌍</span>
+    <div class="q-country" id="q-country"></div>
+  </div>
+
+  <div class="opts-grid" id="opts-grid"></div>
+  <div class="hint-line" id="hint-line"></div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screen-result">
+  <div id="result-content"></div>
+</div>
+
+<!-- GAMEOVER -->
+<div class="screen" id="screen-gameover">
+  <div id="gameover-content"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const LEVELS = [
+  {
+    name: "Explorateur",
+    emoji: "🌱",
+    color: "#4ade80",
+    shadow: "rgba(74,222,128,0.25)",
+    glow: "rgba(74,222,128,1)",
+    desc: "Les grandes capitales mondiales",
+    questions: [
+      { country:"France",         flag:"🇫🇷", capital:"Paris" },
+      { country:"Allemagne",      flag:"🇩🇪", capital:"Berlin" },
+      { country:"États-Unis",     flag:"🇺🇸", capital:"Washington D.C." },
+      { country:"Royaume-Uni",    flag:"🇬🇧", capital:"Londres" },
+      { country:"Japon",          flag:"🇯🇵", capital:"Tokyo" },
+      { country:"Italie",         flag:"🇮🇹", capital:"Rome" },
+      { country:"Espagne",        flag:"🇪🇸", capital:"Madrid" },
+      { country:"Canada",         flag:"🇨🇦", capital:"Ottawa" },
+      { country:"Australie",      flag:"🇦🇺", capital:"Canberra" },
+      { country:"Brésil",         flag:"🇧🇷", capital:"Brasília" },
+      { country:"Chine",          flag:"🇨🇳", capital:"Pékin" },
+      { country:"Russie",         flag:"🇷🇺", capital:"Moscou" },
+      { country:"Inde",           flag:"🇮🇳", capital:"New Delhi" },
+      { country:"Mexique",        flag:"🇲🇽", capital:"Mexico" },
+      { country:"Argentine",      flag:"🇦🇷", capital:"Buenos Aires" },
+      { country:"Égypte",         flag:"🇪🇬", capital:"Le Caire" },
+      { country:"Afrique du Sud", flag:"🇿🇦", capital:"Pretoria" },
+      { country:"Corée du Sud",   flag:"🇰🇷", capital:"Séoul" },
+      { country:"Arabie Saoudite",flag:"🇸🇦", capital:"Riyad" },
+      { country:"Turquie",        flag:"🇹🇷", capital:"Ankara" },
+    ]
+  },
+  {
+    name: "Voyageur",
+    emoji: "✈️",
+    color: "#60a5fa",
+    shadow: "rgba(96,165,250,0.25)",
+    glow: "rgba(96,165,250,1)",
+    desc: "Europe & Amériques",
+    questions: [
+      { country:"Suède",              flag:"🇸🇪", capital:"Stockholm" },
+      { country:"Norvège",            flag:"🇳🇴", capital:"Oslo" },
+      { country:"Danemark",           flag:"🇩🇰", capital:"Copenhague" },
+      { country:"Finlande",           flag:"🇫🇮", capital:"Helsinki" },
+      { country:"Portugal",           flag:"🇵🇹", capital:"Lisbonne" },
+      { country:"Pays-Bas",           flag:"🇳🇱", capital:"Amsterdam" },
+      { country:"Belgique",           flag:"🇧🇪", capital:"Bruxelles" },
+      { country:"Suisse",             flag:"🇨🇭", capital:"Berne" },
+      { country:"Autriche",           flag:"🇦🇹", capital:"Vienne" },
+      { country:"Grèce",              flag:"🇬🇷", capital:"Athènes" },
+      { country:"Pologne",            flag:"🇵🇱", capital:"Varsovie" },
+      { country:"Rép. Tchèque",       flag:"🇨🇿", capital:"Prague" },
+      { country:"Hongrie",            flag:"🇭🇺", capital:"Budapest" },
+      { country:"Roumanie",           flag:"🇷🇴", capital:"Bucarest" },
+      { country:"Ukraine",            flag:"🇺🇦", capital:"Kiev" },
+      { country:"Maroc",              flag:"🇲🇦", capital:"Rabat" },
+      { country:"Colombie",           flag:"🇨🇴", capital:"Bogotá" },
+      { country:"Venezuela",          flag:"🇻🇪", capital:"Caracas" },
+      { country:"Pérou",              flag:"🇵🇪", capital:"Lima" },
+      { country:"Chili",              flag:"🇨🇱", capital:"Santiago" },
+      { country:"Thaïlande",          flag:"🇹🇭", capital:"Bangkok" },
+      { country:"Viêt Nam",           flag:"🇻🇳", capital:"Hanoï" },
+      { country:"Iran",               flag:"🇮🇷", capital:"Téhéran" },
+      { country:"Irak",               flag:"🇮🇶", capital:"Bagdad" },
+      { country:"Israël",             flag:"🇮🇱", capital:"Jérusalem" },
+    ]
+  },
+  {
+    name: "Géographe",
+    emoji: "🗺️",
+    color: "#fb923c",
+    shadow: "rgba(251,146,60,0.25)",
+    glow: "rgba(251,146,60,1)",
+    desc: "Afrique & Asie profonde",
+    questions: [
+      { country:"Éthiopie",       flag:"🇪🇹", capital:"Addis-Abeba" },
+      { country:"Ghana",          flag:"🇬🇭", capital:"Accra" },
+      { country:"Kenya",          flag:"🇰🇪", capital:"Nairobi" },
+      { country:"Tanzanie",       flag:"🇹🇿", capital:"Dodoma" },
+      { country:"Sénégal",        flag:"🇸🇳", capital:"Dakar" },
+      { country:"Côte d'Ivoire",  flag:"🇨🇮", capital:"Yamoussoukro" },
+      { country:"Cameroun",       flag:"🇨🇲", capital:"Yaoundé" },
+      { country:"Mozambique",     flag:"🇲🇿", capital:"Maputo" },
+      { country:"Zambie",         flag:"🇿🇲", capital:"Lusaka" },
+      { country:"Zimbabwe",       flag:"🇿🇼", capital:"Harare" },
+      { country:"Madagascar",     flag:"🇲🇬", capital:"Antananarivo" },
+      { country:"Soudan",         flag:"🇸🇩", capital:"Khartoum" },
+      { country:"Libye",          flag:"🇱🇾", capital:"Tripoli" },
+      { country:"Ouzbékistan",    flag:"🇺🇿", capital:"Tachkent" },
+      { country:"Kazakhstan",     flag:"🇰🇿", capital:"Astana" },
+      { country:"Géorgie",        flag:"🇬🇪", capital:"Tbilissi" },
+      { country:"Arménie",        flag:"🇦🇲", capital:"Erevan" },
+      { country:"Azerbaïdjan",    flag:"🇦🇿", capital:"Bakou" },
+      { country:"Mongolie",       flag:"🇲🇳", capital:"Oulan-Bator" },
+      { country:"Népal",          flag:"🇳🇵", capital:"Katmandou" },
+      { country:"Sri Lanka",      flag:"🇱🇰", capital:"Kotte" },
+      { country:"Myanmar",        flag:"🇲🇲", capital:"Naypyidaw" },
+      { country:"Laos",           flag:"🇱🇦", capital:"Vientiane" },
+      { country:"Cambodge",       flag:"🇰🇭", capital:"Phnom Penh" },
+      { country:"Maurice",        flag:"🇲🇺", capital:"Port-Louis" },
+    ]
+  },
+  {
+    name: "Expert Mondial",
+    emoji: "🏆",
+    color: "#a78bfa",
+    shadow: "rgba(167,139,250,0.25)",
+    glow: "rgba(167,139,250,1)",
+    desc: "Les capitales les plus rares",
+    questions: [
+      { country:"Turkménistan",           flag:"🇹🇲", capital:"Achgabat" },
+      { country:"Tadjikistan",            flag:"🇹🇯", capital:"Douchanbé" },
+      { country:"Kirghizistan",           flag:"🇰🇬", capital:"Bichkek" },
+      { country:"Timor oriental",         flag:"🇹🇱", capital:"Dili" },
+      { country:"Palaos",                 flag:"🇵🇼", capital:"Ngerulmud" },
+      { country:"Îles Marshall",          flag:"🇲🇭", capital:"Majuro" },
+      { country:"Micronésie",             flag:"🇫🇲", capital:"Palikir" },
+      { country:"Nauru",                  flag:"🇳🇷", capital:"Yaren" },
+      { country:"Tuvalu",                 flag:"🇹🇻", capital:"Funafuti" },
+      { country:"Kiribati",               flag:"🇰🇮", capital:"Tarawa-Sud" },
+      { country:"Vanuatu",                flag:"🇻🇺", capital:"Port-Vila" },
+      { country:"Îles Salomon",           flag:"🇸🇧", capital:"Honiara" },
+      { country:"Papouasie-N.-Guinée",    flag:"🇵🇬", capital:"Port Moresby" },
+      { country:"Fidji",                  flag:"🇫🇯", capital:"Suva" },
+      { country:"Samoa",                  flag:"🇼🇸", capital:"Apia" },
+      { country:"Tonga",                  flag:"🇹🇴", capital:"Nuku'alofa" },
+      { country:"Comores",                flag:"🇰🇲", capital:"Moroni" },
+      { country:"Sao Tomé-et-Principe",   flag:"🇸🇹", capital:"São Tomé" },
+      { country:"Cap-Vert",               flag:"🇨🇻", capital:"Praia" },
+      { country:"Djibouti",               flag:"🇩🇯", capital:"Djibouti" },
+      { country:"Bhoutan",                flag:"🇧🇹", capital:"Thimphu" },
+      { country:"Maldives",               flag:"🇲🇻", capital:"Malé" },
+      { country:"Guinée",                 flag:"🇬🇳", capital:"Conakry" },
+      { country:"Guinée équatoriale",     flag:"🇬🇶", capital:"Malabo" },
+      { country:"Érythrée",               flag:"🇪🇷", capital:"Asmara" },
+    ]
+  }
+];
+
+const TIMER_SECONDS = 20;
+const MAX_LIVES = 3;
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+
+let G = {
+  lvlIdx: 0, qIdx: 0,
+  questions: [], options: [],
+  score: 0, lives: MAX_LIVES,
+  streak: 0, maxStreak: 0,
+  wrongCount: 0,
+  answered: false,
+  timerVal: TIMER_SECONDS,
+  timerID: null,
+};
+
+let progress = {};
+try { progress = JSON.parse(localStorage.getItem('geoquiz_v2') || '{}'); } catch(e) {}
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = 0 | Math.random() * (i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function save() {
+  try { localStorage.setItem('geoquiz_v2', JSON.stringify(progress)); } catch(e) {}
+}
+
+function stars(li) { return progress[li]?.stars || 0; }
+function best(li)  { return progress[li]?.best  || 0; }
+
+function totalStars() {
+  return Object.values(progress).reduce((s, p) => s + (p.stars || 0), 0);
+}
+
+function calcStars(wrong, total) {
+  const ratio = (total - wrong) / total;
+  if (ratio >= 0.9) return 3;
+  if (ratio >= 0.68) return 2;
+  return 1;
+}
+
+function wrongOptions(correct, lvlIdx) {
+  const pool = shuffle(
+    LEVELS[lvlIdx].questions
+      .map(q => q.capital)
+      .filter(c => c !== correct)
+  );
+  const extra = shuffle(
+    LEVELS.flatMap((l, i) => i === lvlIdx ? [] : l.questions.map(q => q.capital))
+      .filter(c => c !== correct)
+  );
+  const result = [];
+  for (const c of [...pool, ...extra]) {
+    if (!result.includes(c)) result.push(c);
+    if (result.length === 3) break;
+  }
+  return result;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function popFeedback(emoji) {
+  const el = document.getElementById('feedback');
+  el.textContent = emoji;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+  setTimeout(() => el.classList.remove('pop'), 800);
+}
+
+function fireConfetti() {
+  const wrap = document.getElementById('confetti');
+  wrap.innerHTML = '';
+  const colors = ['#fbbf24','#4ade80','#60a5fa','#f87171','#a78bfa','#fb923c','#fff'];
+  for (let i = 0; i < 90; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      width: ${4 + Math.random() * 9}px;
+      height: ${6 + Math.random() * 10}px;
+      background: ${colors[0 | Math.random() * colors.length]};
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      animation-duration: ${1.8 + Math.random() * 2}s;
+      animation-delay: ${Math.random() * 0.8}s;
+    `;
+    wrap.appendChild(p);
+  }
+  setTimeout(() => wrap.innerHTML = '', 4000);
+}
+
+// ── HOME ─────────────────────────────────────────────────────────────────────
+
+function renderHome() {
+  clearInterval(G.timerID);
+  const ts = totalStars(), ms = LEVELS.length * 3;
+  const done = Object.keys(progress).length;
+
+  let html = `
+    <div class="home-hero">
+      <h1 class="home-title">GéoQuiz</h1>
+      <p class="home-sub">Capitales du Monde &middot; 90 pays &middot; 4 niveaux</p>
+      <div class="home-badges">
+        <span>⭐ ${ts} / ${ms} étoiles</span>
+        <span>🏅 ${done} / 4 niveaux</span>
+      </div>
+    </div>
+    <p class="section-label">Choisissez votre niveau</p>
+    <div class="levels-grid">
+  `;
+
+  LEVELS.forEach((lv, i) => {
+    const locked = i > 0 && !progress[i - 1];
+    const s = stars(i), b = best(i);
+    html += `
+      <div class="level-card ${locked ? 'locked' : ''}"
+           style="--accent:${lv.color};--shadow:${lv.shadow};--glow:${lv.glow}"
+           ${locked ? '' : `onclick="startLevel(${i})"`}>
+        ${locked ? '<div class="lock-overlay">🔒</div>' : ''}
+        <span class="level-emoji">${lv.emoji}</span>
+        <div class="level-name" style="color:${lv.color}">${lv.name}</div>
+        <div class="level-desc">${lv.desc}</div>
+        <div class="level-stars">
+          ${[1,2,3].map(n => `<span class="${n<=s?'':'star-off'}">⭐</span>`).join('')}
+        </div>
+        <div class="level-info">${lv.questions.length} questions · 3 vies · 20 s/question</div>
+        ${b > 0 ? `<div class="level-best">Record : ${b} pts</div>` : ''}
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  document.getElementById('home-content').innerHTML = html;
+  showScreen('home');
+}
+
+// ── GAME ─────────────────────────────────────────────────────────────────────
+
+function startLevel(li) {
+  G = {
+    lvlIdx: li,
+    qIdx: 0,
+    questions: shuffle(LEVELS[li].questions),
+    options: [],
+    score: 0,
+    lives: MAX_LIVES,
+    streak: 0,
+    maxStreak: 0,
+    wrongCount: 0,
+    answered: false,
+    timerVal: TIMER_SECONDS,
+    timerID: null,
+  };
+  showScreen('game');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (G.qIdx >= G.questions.length) { endLevel(); return; }
+
+  G.answered = false;
+  const q = G.questions[G.qIdx];
+
+  // Refresh card animation
+  const card = document.getElementById('q-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = '';
+
+  document.getElementById('q-flag').textContent    = q.flag;
+  document.getElementById('q-country').textContent = q.country;
+  document.getElementById('q-num').textContent     =
+    `Question ${G.qIdx + 1} / ${G.questions.length}`;
+
+  G.options = shuffle([q.capital, ...wrongOptions(q.capital, G.lvlIdx)]);
+
+  const grid = document.getElementById('opts-grid');
+  grid.innerHTML = '';
+  G.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.dataset.idx = idx;
+    btn.addEventListener('click', () => pick(idx));
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('hint-line').textContent = '';
+  updateHUD();
+  startTimer();
+}
+
+function updateHUD() {
+  // Lives
+  document.getElementById('lives').innerHTML =
+    [1,2,3].map(n => `<span class="life ${n > G.lives ? 'lost' : ''}">❤️</span>`).join('');
+
+  // Score
+  document.getElementById('hud-score').textContent = G.score;
+
+  // Streak
+  const el = document.getElementById('hud-streak');
+  if (G.streak >= 3) {
+    el.textContent = `🔥×${G.streak}`;
+    el.className = 'streak-val hot';
+  } else if (G.streak > 0) {
+    el.textContent = `✨ ${G.streak}`;
+    el.className = 'streak-val';
+  } else {
+    el.textContent = '—';
+    el.className = 'streak-val';
+  }
+
+  // Progress
+  document.getElementById('prog-fill').style.width =
+    (G.qIdx / G.questions.length * 100) + '%';
+}
+
+function startTimer() {
+  clearInterval(G.timerID);
+  G.timerVal = TIMER_SECONDS;
+  drawTimer();
+  G.timerID = setInterval(() => {
+    G.timerVal--;
+    drawTimer();
+    if (G.timerVal <= 0) { clearInterval(G.timerID); timeOut(); }
+  }, 1000);
+}
+
+function drawTimer() {
+  const pct = G.timerVal / TIMER_SECONDS * 100;
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = pct + '%';
+  bar.style.background =
+    G.timerVal <= 5  ? '#f87171' :
+    G.timerVal <= 10 ? '#fbbf24' :
+    'linear-gradient(90deg, #f87171, #fbbf24, #4ade80)';
+  document.getElementById('timer-txt').textContent = G.timerVal + 's';
+}
+
+function timeOut() {
+  if (G.answered) return;
+  G.answered = true;
+  G.lives--;
+  G.streak = 0;
+  G.wrongCount++;
+
+  markButtons(-1); // -1 = timeout: only highlight correct
+  document.getElementById('hint-line').textContent = '⏰ Temps écoulé !';
+  popFeedback('⏰');
+  updateHUD();
+
+  if (G.lives <= 0) { setTimeout(showGameOver, 1700); return; }
+  setTimeout(renderQuestion, 1800);
+}
+
+function pick(idx) {
+  if (G.answered) return;
+  G.answered = true;
+  clearInterval(G.timerID);
+
+  const q       = G.questions[G.qIdx];
+  const chosen  = G.options[idx];
+  const correct = q.capital;
+  const ok      = chosen === correct;
+
+  markButtons(ok ? idx : -1, idx);
+
+  if (ok) {
+    G.streak++;
+    if (G.streak > G.maxStreak) G.maxStreak = G.streak;
+    const timeBonus   = Math.round(G.timerVal * 2.5);
+    const multiplier  = G.streak >= 5 ? 3 : G.streak >= 3 ? 2 : 1;
+    const gained      = (100 + timeBonus) * multiplier;
+    G.score += gained;
+
+    let hint = `+${gained} pts`;
+    if (multiplier > 1) hint += `  ×${multiplier} combo 🔥`;
+    document.getElementById('hint-line').textContent = hint;
+    popFeedback('✅');
+  } else {
+    G.lives--;
+    G.streak = 0;
+    G.wrongCount++;
+    document.getElementById('hint-line').textContent = `Bonne réponse : ${correct}`;
+    popFeedback('❌');
+  }
+
+  updateHUD();
+  G.qIdx++;
+
+  if (!ok && G.lives <= 0) { setTimeout(showGameOver, 1800); return; }
+  setTimeout(renderQuestion, ok ? 950 : 1900);
+}
+
+function markButtons(correctIdx, wrongIdx = -2) {
+  document.querySelectorAll('.opt-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    const cap = G.options[i];
+    if (cap === G.questions[G.qIdx].capital) btn.classList.add('correct');
+    else if (i === wrongIdx) btn.classList.add('wrong');
+  });
+}
+
+// ── END LEVEL ────────────────────────────────────────────────────────────────
+
+function endLevel() {
+  clearInterval(G.timerID);
+  const lv    = LEVELS[G.lvlIdx];
+  const total = G.questions.length;
+  const right = total - G.wrongCount;
+  const s     = calcStars(G.wrongCount, total);
+  const acc   = Math.round(right / total * 100);
+
+  // Save
+  const prev = progress[G.lvlIdx] || { stars: 0, best: 0 };
+  progress[G.lvlIdx] = {
+    stars: Math.max(prev.stars, s),
+    best:  Math.max(prev.best, G.score),
+  };
+  save();
+
+  const msgs = {
+    3: ["Parfait ! 🌟",    "Score sans faute, tu es imbattable !"],
+    2: ["Très bien ! 👏",  "Belle maîtrise de la géographie !"],
+    1: ["Bien joué ! 😊",  "Tu progresses, continue ainsi !"],
+  };
+  const [title, sub] = msgs[s];
+  const hasNext = G.lvlIdx < LEVELS.length - 1;
+
+  document.getElementById('result-content').innerHTML = `
+    <span class="res-emoji">${lv.emoji}</span>
+    <h2 class="res-title">${title}</h2>
+    <p class="res-sub">${sub}<br><small style="opacity:.6">Niveau <strong>${lv.name}</strong> terminé !</small></p>
+    <div class="res-stars">
+      ${[1,2,3].map((n,i) => `
+        <span class="res-star" style="animation-delay:${i*0.2}s;opacity:${n<=s?1:.15};filter:${n<=s?'none':'grayscale(1)'}">⭐</span>
+      `).join('')}
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val">${G.score}</div><div class="stat-lbl">Score total</div></div>
+      <div class="stat-box"><div class="stat-val">${right}/${total}</div><div class="stat-lbl">Bonnes réponses</div></div>
+      <div class="stat-box"><div class="stat-val">${acc}%</div><div class="stat-lbl">Précision</div></div>
+    </div>
+    ${G.maxStreak >= 3 ? `<p style="color:#f97316;font-weight:700;margin-bottom:20px">Meilleure série : 🔥 ${G.maxStreak} d'affilée !</p>` : ''}
+    <div class="btns">
+      <button class="btn btn-ghost" onclick="startLevel(${G.lvlIdx})">🔄 Rejouer</button>
+      ${hasNext
+        ? `<button class="btn btn-primary" onclick="startLevel(${G.lvlIdx+1})">Niveau suivant →</button>`
+        : `<button class="btn btn-primary" onclick="renderHome()">🏠 Accueil</button>`
+      }
+    </div>
+  `;
+
+  showScreen('result');
+  if (s >= 2) fireConfetti();
+}
+
+function showGameOver() {
+  clearInterval(G.timerID);
+  const lv = LEVELS[G.lvlIdx];
+  const answered = G.qIdx;
+  const total    = G.questions.length;
+
+  document.getElementById('gameover-content').innerHTML = `
+    <span style="font-size:5rem;display:block;margin-bottom:18px;animation:bounceIn .6s cubic-bezier(.34,1.56,.64,1)">💔</span>
+    <h2 style="font-size:2.4rem;font-weight:900;margin-bottom:8px">Game Over</h2>
+    <p style="color:rgba(255,255,255,.55);margin-bottom:32px">
+      Plus de vies au niveau <strong style="color:${lv.color}">${lv.name}</strong>
+    </p>
+    <div class="stats-row" style="margin-bottom:32px">
+      <div class="stat-box"><div class="stat-val">${G.score}</div><div class="stat-lbl">Score</div></div>
+      <div class="stat-box"><div class="stat-val">${answered}/${total}</div><div class="stat-lbl">Répondues</div></div>
+      <div class="stat-box"><div class="stat-val">${G.maxStreak}</div><div class="stat-lbl">Meilleure série</div></div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-ghost" onclick="renderHome()">🏠 Accueil</button>
+      <button class="btn btn-primary" onclick="startLevel(${G.lvlIdx})">🔄 Réessayer</button>
+    </div>
+  `;
+  showScreen('gameover');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+
+// Étoiles de fond
+(function() {
+  const wrap = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2 + 0.5;
+    s.style.cssText = `
+      left:${Math.random()*100}vw;
+      top:${Math.random()*100}vh;
+      width:${sz}px; height:${sz}px;
+      opacity:${Math.random()*.6};
+      --dur:${2+Math.random()*4}s;
+      animation-delay:${Math.random()*4}s;
+    `;
+    wrap.appendChild(s);
+  }
+})();
+
+renderHome();
+</script>
+</body>
+</html>
