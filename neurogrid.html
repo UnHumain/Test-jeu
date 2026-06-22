@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroGrid — Mémoire Séquentielle</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050510;
+      --surface: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.1);
+      --accent: #7c3aed;
+      --glow: rgba(124,58,237,0.6);
+      --green: #10b981;
+      --red: #ef4444;
+      --gold: #f59e0b;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 5%, rgba(124,58,237,0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 85% 90%, rgba(16,185,129,0.12) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; position: relative; z-index: 1; width: 100%; max-width: 680px; padding: 24px 20px; }
+    .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+    /* ── HOME ── */
+    .logo {
+      margin-top: 40px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .logo-title {
+      font-size: clamp(3rem, 10vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -3px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-sub {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .home-desc {
+      text-align: center;
+      color: rgba(255,255,255,0.55);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 420px;
+      margin: 28px 0 36px;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .diff-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 18px 22px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .diff-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--card-glow, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .diff-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px var(--card-shadow, rgba(0,0,0,.3)); border-color: var(--card-color); }
+    .diff-card:hover::before { opacity: 0.07; }
+
+    .diff-icon { font-size: 2.6rem; display: block; margin-bottom: 12px; }
+    .diff-name { font-size: 1.1rem; font-weight: 800; color: var(--card-color); margin-bottom: 6px; }
+    .diff-info { font-size: 0.75rem; color: rgba(255,255,255,0.4); line-height: 1.5; }
+
+    .record-line {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.3);
+      margin-top: 26px;
+    }
+
+    /* ── GAME HUD ── */
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .hud-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 18px;
+      text-align: center;
+      min-width: 80px;
+    }
+    .hud-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.35); }
+    .hud-val { font-size: 1.6rem; font-weight: 900; color: var(--gold); line-height: 1.1; }
+    .hud-val.lives { color: #f87171; letter-spacing: 2px; }
+
+    .level-badge {
+      background: linear-gradient(135deg, var(--accent), #06b6d4);
+      border-radius: 50px;
+      padding: 8px 22px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    /* ── STATUS MESSAGE ── */
+    .status-msg {
+      font-size: 1.1rem;
+      font-weight: 700;
+      min-height: 34px;
+      margin-bottom: 16px;
+      text-align: center;
+      transition: color 0.3s;
+    }
+
+    /* ── GRID ── */
+    .grid-wrap {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      backdrop-filter: blur(6px);
+    }
+
+    .cell {
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: transparent;
+      user-select: none;
+      aspect-ratio: 1;
+    }
+
+    .cell:hover:not(.disabled) {
+      background: rgba(255,255,255,0.12);
+      transform: scale(1.04);
+    }
+
+    .cell.show {
+      background: rgba(124,58,237,0.35);
+      border-color: #7c3aed;
+      box-shadow: 0 0 22px rgba(124,58,237,0.55), inset 0 0 12px rgba(124,58,237,0.2);
+      color: rgba(255,255,255,0.9);
+      transform: scale(1.05);
+    }
+
+    .cell.correct {
+      background: rgba(16,185,129,0.3);
+      border-color: var(--green);
+      box-shadow: 0 0 18px rgba(16,185,129,0.5);
+      color: transparent;
+      animation: cellCorrect 0.4s ease;
+    }
+
+    .cell.wrong {
+      background: rgba(239,68,68,0.3);
+      border-color: var(--red);
+      box-shadow: 0 0 18px rgba(239,68,68,0.5);
+      animation: cellWrong 0.4s ease;
+    }
+
+    .cell.missed {
+      background: rgba(245,158,11,0.25);
+      border-color: var(--gold);
+      box-shadow: 0 0 14px rgba(245,158,11,0.4);
+    }
+
+    .cell.disabled { cursor: default; }
+
+    @keyframes cellCorrect {
+      0%,100% { transform: scale(1); }
+      40% { transform: scale(1.12); }
+    }
+    @keyframes cellWrong {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      80% { transform: translateX(-3px); }
+    }
+
+    /* ── PROGRESS DOTS ── */
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 360px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+    .dot.done { background: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+    .dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--glow); animation: pulse 1s ease infinite alternate; }
+    .dot.fail { background: var(--red); border-color: var(--red); }
+
+    @keyframes pulse { from { opacity: 0.6; } to { opacity: 1; } }
+
+    /* ── SEQUENCE DISPLAY ── */
+    .seq-counter {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 14px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    /* ── RESULT ── */
+    .result-box {
+      width: 100%;
+      text-align: center;
+      padding: 20px 0 40px;
+    }
+    .result-icon { font-size: 5rem; display: block; margin-bottom: 18px; animation: bounceIn 0.6s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes bounceIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .result-title { font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; }
+    .result-sub { color: rgba(255,255,255,0.5); margin-bottom: 32px; line-height: 1.6; }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 10px;
+    }
+    .stat-val { font-size: 1.9rem; font-weight: 900; color: var(--gold); }
+    .stat-lbl { font-size: 0.68rem; color: rgba(255,255,255,0.35); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ── BUTTONS ── */
+    .btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(124,58,237,0.4); }
+    .btn-ghost {
+      background: var(--surface);
+      color: #fff;
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); }
+
+    /* ── CONFETTI ── */
+    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden; }
+    .cp {
+      position: absolute;
+      top: -16px;
+      border-radius: 2px;
+      animation: cfell linear forwards;
+    }
+    @keyframes cfell { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+    /* ── FEEDBACK FLASH ── */
+    .flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 900;
+      opacity: 0;
+      transition: opacity 0.08s;
+    }
+    .flash.go { opacity: 1; }
+
+    /* ── PULSE RING on show ── */
+    @keyframes ringPop {
+      0% { box-shadow: 0 0 0 0 rgba(124,58,237,0.7); }
+      100% { box-shadow: 0 0 0 18px rgba(124,58,237,0); }
+    }
+    .cell.ring { animation: ringPop 0.5s ease-out; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .diff-grid { grid-template-columns: 1fr; }
+      .result-stats { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="confetti-wrap" id="confetti"></div>
+<div class="flash" id="flash"></div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="logo">
+    <div class="logo-title">NeuroGrid</div>
+    <div class="logo-sub">Mémoire · Séquence · Précision</div>
+  </div>
+
+  <p class="home-desc">
+    Mémorise l'ordre dans lequel les cases s'allument, puis reproduis-le exactement.
+    Chaque niveau ajoute une case. Plus tu avances, plus ton cerveau souffre.
+  </p>
+
+  <div class="diff-grid">
+    <div class="diff-card"
+         style="--card-color:#4ade80;--card-shadow:rgba(74,222,128,0.25);--card-glow:rgba(74,222,128,1)"
+         onclick="startGame('easy')">
+      <span class="diff-icon">🧠</span>
+      <div class="diff-name">Normal</div>
+      <div class="diff-info">Grille 4×4<br>3 vies · 2 sec/case<br>Commence à 3 cases</div>
+    </div>
+    <div class="diff-card"
+         style="--card-color:#60a5fa;--card-shadow:rgba(96,165,250,0.25);--card-glow:rgba(96,165,250,1)"
+         onclick="startGame('hard')">
+      <span class="diff-icon">⚡</span>
+      <div class="diff-name">Difficile</div>
+      <div class="diff-info">Grille 5×5<br>2 vies · 1.3 sec/case<br>Commence à 4 cases</div>
+    </div>
+    <div class="diff-card"
+         style="--card-color:#f97316;--card-shadow:rgba(249,115,22,0.25);--card-glow:rgba(249,115,22,1)"
+         onclick="startGame('expert')">
+      <span class="diff-icon">🔥</span>
+      <div class="diff-name">Expert</div>
+      <div class="diff-info">Grille 6×6<br>2 vies · 1 sec/case<br>Commence à 5 cases</div>
+    </div>
+    <div class="diff-card"
+         style="--card-color:#a78bfa;--card-shadow:rgba(167,139,250,0.25);--card-glow:rgba(167,139,250,1)"
+         onclick="startGame('nightmare')">
+      <span class="diff-icon">💀</span>
+      <div class="diff-name">Cauchemar</div>
+      <div class="diff-info">Grille 7×7<br>1 vie · 0.7 sec/case<br>Commence à 6 cases</div>
+    </div>
+  </div>
+
+  <div class="record-line" id="home-records"></div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="screen-game">
+  <div class="hud">
+    <div class="hud-box">
+      <div class="hud-label">Score</div>
+      <div class="hud-val" id="hud-score">0</div>
+    </div>
+    <div class="level-badge" id="hud-level">Niveau 1</div>
+    <div class="hud-box">
+      <div class="hud-label">Vies</div>
+      <div class="hud-val lives" id="hud-lives">❤️❤️❤️</div>
+    </div>
+  </div>
+
+  <div class="progress-dots" id="progress-dots"></div>
+  <div class="seq-counter" id="seq-counter"></div>
+  <div class="status-msg" id="status-msg"></div>
+
+  <div class="grid-wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screen-result">
+  <div class="result-box" id="result-content"></div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+
+const MODES = {
+  easy:      { grid: 4, lives: 3, startLen: 3, showMs: 2000, gapMs: 300,  maxLevels: 20 },
+  hard:      { grid: 5, lives: 2, startLen: 4, showMs: 1300, gapMs: 250,  maxLevels: 20 },
+  expert:    { grid: 6, lives: 2, startLen: 5, showMs: 1000, gapMs: 200,  maxLevels: 20 },
+  nightmare: { grid: 7, lives: 1, startLen: 6, showMs: 700,  gapMs: 150,  maxLevels: 20 },
+};
+
+const NAMES = { easy: 'Normal', hard: 'Difficile', expert: 'Expert', nightmare: 'Cauchemar' };
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+let G = {};
+let records = {};
+try { records = JSON.parse(localStorage.getItem('neurogrid_rec') || '{}'); } catch(e) {}
+
+function saveRecord(mode, score) {
+  records[mode] = Math.max(records[mode] || 0, score);
+  try { localStorage.setItem('neurogrid_rec', JSON.stringify(records)); } catch(e) {}
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screen-' + id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function rand(n) { return 0 | Math.random() * n; }
+
+function confetti() {
+  const wrap = $('confetti');
+  wrap.innerHTML = '';
+  const colors = ['#7c3aed','#06b6d4','#10b981','#fbbf24','#f97316','#ec4899','#fff'];
+  for (let i = 0; i < 100; i++) {
+    const p = document.createElement('div');
+    p.className = 'cp';
+    p.style.cssText = `
+      left:${Math.random()*100}vw;
+      width:${4+Math.random()*9}px;
+      height:${6+Math.random()*10}px;
+      background:${colors[rand(colors.length)]};
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.8+Math.random()*2}s;
+      animation-delay:${Math.random()*.6}s;
+    `;
+    wrap.appendChild(p);
+  }
+  setTimeout(() => wrap.innerHTML = '', 4000);
+}
+
+function flashScreen(color) {
+  const el = $('flash');
+  el.style.background = color;
+  el.classList.add('go');
+  setTimeout(() => el.classList.remove('go'), 120);
+}
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+
+function renderHome() {
+  const parts = Object.entries(NAMES).map(([k,n]) => {
+    const r = records[k];
+    return r ? `${n}: <strong style="color:#fbbf24">${r}</strong>` : null;
+  }).filter(Boolean);
+  $('home-records').innerHTML = parts.length
+    ? '🏆 Records — ' + parts.join(' &nbsp;·&nbsp; ')
+    : '';
+  showScreen('home');
+}
+
+// ── GAME INIT ─────────────────────────────────────────────────────────────────
+
+function startGame(mode) {
+  const cfg = MODES[mode];
+  G = {
+    mode, cfg,
+    gridSize: cfg.grid,
+    lives: cfg.lives,
+    score: 0,
+    level: 1,
+    seqLen: cfg.startLen,
+    sequence: [],
+    userSeq: [],
+    phase: 'show', // 'show' | 'recall' | 'wait'
+    totalLevels: 0,
+    aborted: false,
+  };
+  buildGrid();
+  showScreen('game');
+  updateHUD();
+  runLevel();
+}
+
+// ── BUILD GRID ────────────────────────────────────────────────────────────────
+
+function buildGrid() {
+  const n = G.gridSize;
+  const grid = $('grid');
+  const cellPx = Math.min(Math.floor((Math.min(window.innerWidth, 640) - 80) / n), 90);
+  grid.style.gridTemplateColumns = `repeat(${n}, ${cellPx}px)`;
+  grid.innerHTML = '';
+
+  for (let i = 0; i < n * n; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell disabled';
+    cell.dataset.idx = i;
+    cell.style.width = cell.style.height = cellPx + 'px';
+    cell.style.fontSize = Math.max(14, cellPx * 0.35) + 'px';
+    cell.addEventListener('click', () => onCellClick(i));
+    grid.appendChild(cell);
+  }
+}
+
+function cells() { return document.querySelectorAll('.cell'); }
+
+function cellEl(idx) { return $('grid').children[idx]; }
+
+function resetCells() {
+  cells().forEach(c => {
+    c.className = 'cell disabled';
+    c.textContent = '';
+  });
+}
+
+// ── HUD ───────────────────────────────────────────────────────────────────────
+
+function updateHUD() {
+  $('hud-score').textContent = G.score;
+  $('hud-level').textContent = `Niveau ${G.level}`;
+  const hearts = '❤️'.repeat(G.lives) + (G.cfg.lives > G.lives ? '🖤'.repeat(G.cfg.lives - G.lives) : '');
+  $('hud-lives').textContent = hearts;
+}
+
+function updateDots(current = -1) {
+  const total = 10; // show 10-dot progress window
+  const dots = $('progress-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    const lvl = G.level - (current >= 0 ? 0 : 0) + i - (G.level > 5 ? G.level - 5 : 0);
+    d.className = 'dot';
+    if (i < (G.level - 1) % total) d.classList.add('done');
+    else if (i === (G.level - 1) % total) d.classList.add('current');
+    dots.appendChild(d);
+  }
+}
+
+function setStatus(msg, color = '#fff') {
+  const el = $('status-msg');
+  el.textContent = msg;
+  el.style.color = color;
+}
+
+function setSeqCounter(txt) {
+  $('seq-counter').textContent = txt;
+}
+
+// ── LEVEL FLOW ────────────────────────────────────────────────────────────────
+
+async function runLevel() {
+  if (G.aborted) return;
+  G.phase = 'show';
+  G.totalLevels++;
+  updateDots();
+  updateHUD();
+  resetCells();
+  cells().forEach(c => c.classList.add('disabled'));
+
+  // Generate sequence
+  const n = G.gridSize * G.gridSize;
+  const pool = Array.from({length: n}, (_, i) => i);
+  // Fisher-Yates
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = rand(i + 1);
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  G.sequence = pool.slice(0, G.seqLen);
+  G.userSeq = [];
+
+  setStatus('Mémorise la séquence…', 'rgba(255,255,255,0.7)');
+  setSeqCounter('');
+
+  await sleep(600);
+
+  // Show sequence
+  for (let i = 0; i < G.sequence.length; i++) {
+    if (G.aborted) return;
+    const idx = G.sequence[i];
+    const el = cellEl(idx);
+
+    el.textContent = i + 1;
+    el.classList.add('show', 'ring');
+
+    await sleep(G.cfg.showMs);
+    if (G.aborted) return;
+
+    el.classList.remove('show', 'ring');
+    el.textContent = '';
+
+    if (i < G.sequence.length - 1) await sleep(G.cfg.gapMs);
+  }
+
+  if (G.aborted) return;
+
+  // Enable input
+  G.phase = 'recall';
+  cells().forEach(c => c.classList.remove('disabled'));
+  setStatus('À toi ! Reproduis la séquence.', '#7c3aed');
+  setSeqCounter(`0 / ${G.seqLen}`);
+}
+
+// ── INPUT ─────────────────────────────────────────────────────────────────────
+
+async function onCellClick(idx) {
+  if (G.phase !== 'recall') return;
+  if (G.aborted) return;
+
+  const step = G.userSeq.length;
+  const expected = G.sequence[step];
+  const el = cellEl(idx);
+
+  if (idx === expected) {
+    // Correct
+    G.userSeq.push(idx);
+    el.textContent = G.userSeq.length;
+    el.classList.add('correct');
+    setSeqCounter(`${G.userSeq.length} / ${G.seqLen}`);
+
+    const pts = 10 + G.level * 5 + (G.cfg.startLen * 2);
+    G.score += pts;
+    updateHUD();
+
+    if (G.userSeq.length === G.seqLen) {
+      // Level complete!
+      G.phase = 'wait';
+      cells().forEach(c => c.classList.add('disabled'));
+      setStatus(`✅ Parfait ! +${G.score} pts accumulés`, '#10b981');
+      setSeqCounter('');
+      flashScreen('rgba(16,185,129,0.12)');
+
+      await sleep(900);
+      if (G.aborted) return;
+
+      G.level++;
+      G.seqLen++;
+
+      if (G.level > G.cfg.maxLevels) {
+        endGame(true);
+        return;
+      }
+
+      runLevel();
+    }
+  } else {
+    // Wrong
+    G.phase = 'wait';
+    cells().forEach(c => c.classList.add('disabled'));
+
+    el.classList.add('wrong');
+    flashScreen('rgba(239,68,68,0.15)');
+
+    // Show correct
+    await sleep(300);
+    cellEl(expected).classList.add('missed');
+
+    // Reveal full remaining sequence
+    for (let i = G.userSeq.length + 1; i < G.seqLen; i++) {
+      await sleep(180);
+      if (G.aborted) return;
+      const miss = cellEl(G.sequence[i]);
+      miss.classList.add('missed');
+    }
+
+    G.lives--;
+    updateHUD();
+    setStatus(`❌ Mauvaise case ! Il fallait la n°${step + 1}`, '#ef4444');
+    setSeqCounter('');
+
+    await sleep(1600);
+    if (G.aborted) return;
+
+    if (G.lives <= 0) {
+      endGame(false);
+      return;
+    }
+
+    // Replay same level
+    setStatus('Essaie encore…', '#fbbf24');
+    await sleep(500);
+    runLevel();
+  }
+}
+
+// ── END ───────────────────────────────────────────────────────────────────────
+
+function endGame(won) {
+  G.aborted = true;
+  saveRecord(G.mode, G.score);
+
+  const reached = G.seqLen - 1; // last completed length
+  const modeName = NAMES[G.mode];
+
+  let icon, title, sub;
+  if (won) {
+    icon = '🏆';
+    title = 'Félicitations !';
+    sub = `Tu as complété les ${G.cfg.maxLevels} niveaux en mode ${modeName}.<br>Ton cerveau est en feu.`;
+    confetti();
+  } else {
+    const msgs = [
+      ['Pas mal…', 'Tu iras plus loin la prochaine fois !'],
+      ['Presque !', 'Ta mémoire est plus forte que tu ne le crois.'],
+      ['Continue !', 'Chaque essai forge les neurones.'],
+      ['Bien joué !', 'Reviens quand tu veux battre ton record.'],
+    ];
+    const m = msgs[Math.min(G.level - 1, msgs.length - 1)] || msgs[0];
+    icon = G.level >= 5 ? '😤' : '💔';
+    title = m[0];
+    sub = m[1];
+  }
+
+  $('result-content').innerHTML = `
+    <span class="result-icon">${icon}</span>
+    <h2 class="result-title">${title}</h2>
+    <p class="result-sub">${sub}<br><small style="opacity:.5">Mode ${modeName}</small></p>
+    <div class="result-stats">
+      <div class="stat-box">
+        <div class="stat-val">${G.score}</div>
+        <div class="stat-lbl">Score</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${G.level}</div>
+        <div class="stat-lbl">Niveau atteint</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${reached}</div>
+        <div class="stat-lbl">Cases max</div>
+      </div>
+    </div>
+    ${records[G.mode] === G.score && G.score > 0 ? '<p style="color:#fbbf24;font-weight:700;margin-bottom:20px">🏅 Nouveau record !</p>' : ''}
+    <div class="btns">
+      <button class="btn btn-ghost" onclick="abortAndHome()">🏠 Accueil</button>
+      <button class="btn btn-primary" onclick="abortAndRestart()">🔄 Réessayer</button>
+    </div>
+  `;
+
+  showScreen('result');
+}
+
+function abortAndHome() {
+  G.aborted = true;
+  renderHome();
+}
+
+function abortAndRestart() {
+  const mode = G.mode;
+  G.aborted = true;
+  startGame(mode);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+renderHome();
+</script>
+</body>
+</html>
