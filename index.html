@@ -3,1009 +3,2204 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GéoQuiz — Capitales du Monde</title>
+  <meta name="description" content="Cabinet de Kinésithérapie Pédiatrique spécialisé dans la prise en charge des nourrissons, enfants et adolescents. Kiné respiratoire, neuro-motricité, plagiocéphalie, bilans psychomoteurs. Prise de RDV en ligne.">
+  <meta name="keywords" content="kinésithérapie pédiatrique, kiné enfant, kiné respiratoire bébé, plagiocéphalie, bronchiolite, pédiatrie, physiothérapie enfant">
+  <meta property="og:title" content="Cabinet de Kinésithérapie Pédiatrique — Bouger, grandir, s'épanouir">
+  <meta property="og:description" content="Cabinet spécialisé dédié aux nourrissons, enfants et adolescents. Prise en charge motrice, respiratoire, neurologique et orthopédique.">
+  <meta property="og:type" content="website">
+  <title>KinéPédi — Cabinet de Kinésithérapie Pédiatrique</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <style>
+    :root {
+      --primary: #2B7FD4;
+      --primary-dark: #1A5FA8;
+      --primary-light: #EBF4FF;
+      --secondary: #3DC49A;
+      --secondary-dark: #2AA07C;
+      --accent: #FF7043;
+      --accent-light: #FFF3EF;
+      --purple: #7C5CBF;
+      --yellow: #FFB300;
+      --text: #1E293B;
+      --text-light: #64748B;
+      --bg: #FFFFFF;
+      --bg-soft: #F8FBFF;
+      --bg-gray: #F1F5F9;
+      --border: #E2E8F0;
+      --shadow: 0 4px 24px rgba(43,127,212,0.10);
+      --shadow-lg: 0 16px 48px rgba(43,127,212,0.16);
+      --radius: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #080818;
-      min-height: 100vh;
-      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
       overflow-x: hidden;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(90,40,160,0.35) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 60% at 80% 80%, rgba(20,60,120,0.35) 0%, transparent 60%);
-      z-index: 0;
-      pointer-events: none;
-    }
+    h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; line-height: 1.2; }
 
-    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .star {
-      position: absolute;
-      background: #fff;
-      border-radius: 50%;
-      animation: twinkle var(--dur, 3s) ease-in-out infinite alternate;
-    }
-    @keyframes twinkle { 0% { opacity: 0.08; } 100% { opacity: 0.9; } }
+    a { text-decoration: none; color: inherit; }
 
-    .screen { display: none; position: relative; z-index: 1; min-height: 100vh; padding: 20px; }
-    .screen.active { display: block; }
+    img { max-width: 100%; height: auto; }
 
-    /* ── HOME ── */
-    #screen-home { max-width: 860px; margin: 0 auto; }
-
-    .home-hero {
-      text-align: center;
-      padding: 50px 0 36px;
-    }
-
-    .home-title {
-      font-size: clamp(2.6rem, 7vw, 4.5rem);
-      font-weight: 900;
-      letter-spacing: -2px;
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 30%, #ef4444 65%, #a78bfa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-      margin-bottom: 10px;
-    }
-
-    .home-sub {
-      color: rgba(255,255,255,0.55);
-      font-size: 1.05rem;
-      margin-bottom: 22px;
-    }
-
-    .home-badges {
-      display: inline-flex;
-      gap: 20px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 50px;
-      padding: 10px 26px;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.65);
-    }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
 
     .section-label {
-      text-align: center;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      color: rgba(255,255,255,0.3);
-      margin: 8px 0 22px;
-    }
-
-    .levels-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 14px;
-      margin-bottom: 50px;
-    }
-
-    .level-card {
-      position: relative;
-      background: rgba(255,255,255,0.05);
-      border: 1.5px solid rgba(255,255,255,0.1);
-      border-radius: 22px;
-      padding: 30px 18px 22px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-      overflow: hidden;
-    }
-
-    .level-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: var(--glow, transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .level-card:hover:not(.locked) {
-      transform: translateY(-6px);
-      box-shadow: 0 24px 48px var(--shadow, rgba(0,0,0,0.3));
-      border-color: var(--accent, rgba(255,255,255,0.3));
-    }
-
-    .level-card:hover:not(.locked)::after { opacity: 0.06; }
-
-    .level-card.locked { opacity: 0.38; cursor: not-allowed; filter: grayscale(0.5); }
-
-    .lock-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      background: rgba(0,0,0,0.3);
-      border-radius: inherit;
-    }
-
-    .level-emoji { font-size: 3rem; display: block; margin-bottom: 14px; }
-    .level-name { font-size: 1.15rem; font-weight: 800; margin-bottom: 5px; }
-    .level-desc { font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-bottom: 18px; line-height: 1.4; }
-
-    .level-stars { display: flex; justify-content: center; gap: 3px; font-size: 1.1rem; margin-bottom: 8px; }
-    .star-off { opacity: 0.15; }
-
-    .level-info { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
-    .level-best { font-size: 0.72rem; color: rgba(255,255,255,0.28); margin-top: 3px; }
-
-    /* ── GAME ── */
-    #screen-game { max-width: 680px; margin: 0 auto; }
-
-    .game-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0 20px;
-      gap: 12px;
-    }
-
-    .lives { display: flex; gap: 5px; font-size: 1.4rem; }
-    .life { transition: all 0.3s ease; display: inline-block; }
-    .life.lost { opacity: 0.15; filter: grayscale(1); transform: scale(0.75); }
-
-    .hud-score { text-align: center; }
-    .hud-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2.5px; color: rgba(255,255,255,0.35); }
-    .hud-value { font-size: 1.9rem; font-weight: 900; color: #fbbf24; line-height: 1.1; }
-
-    .hud-streak { text-align: right; min-width: 70px; }
-    .streak-val { font-size: 1.05rem; font-weight: 700; color: rgba(255,255,255,0.5); }
-    .streak-val.hot { color: #f97316; animation: heartbeat 0.4s ease; }
-    @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.35); } }
-
-    .prog-wrap {
-      background: rgba(255,255,255,0.08);
-      border-radius: 8px;
-      height: 5px;
-      margin-bottom: 18px;
-      overflow: hidden;
-    }
-    .prog-fill {
-      height: 100%;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #4ade80, #60a5fa);
-      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    .timer-wrap { margin-bottom: 22px; }
-    .timer-bar {
-      height: 4px;
-      border-radius: 4px;
-      transition: width 0.95s linear, background 0.5s;
-    }
-    .timer-txt {
-      text-align: right;
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.4);
-      margin-top: 4px;
-    }
-
-    .q-card {
-      background: rgba(255,255,255,0.065);
-      border: 1.5px solid rgba(255,255,255,0.11);
-      border-radius: 26px;
-      padding: 44px 32px 36px;
-      text-align: center;
-      margin-bottom: 20px;
-      backdrop-filter: blur(12px);
-      animation: cardIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    @keyframes cardIn {
-      from { transform: translateY(20px) scale(0.96); opacity: 0; }
-      to   { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    .q-label {
-      font-size: 0.72rem;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.35);
-      margin-bottom: 14px;
-    }
-    .q-num { font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-bottom: 22px; }
-    .q-flag { font-size: 4.5rem; display: block; margin-bottom: 18px; line-height: 1; }
-    .q-country { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 900; letter-spacing: -0.5px; }
-
-    .opts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 11px;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 6px 16px;
+      border-radius: 100px;
       margin-bottom: 16px;
     }
 
-    .opt-btn {
-      background: rgba(255,255,255,0.065);
-      border: 1.5px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      padding: 18px 14px;
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      font-family: inherit;
-      line-height: 1.3;
-    }
-    .opt-btn:hover:not(:disabled) {
-      background: rgba(255,255,255,0.14);
-      border-color: rgba(255,255,255,0.28);
-      transform: translateY(-2px);
-    }
-    .opt-btn:disabled { cursor: default; }
+    .section-label.green { color: var(--secondary-dark); background: #EDFAF4; }
+    .section-label.orange { color: var(--accent); background: var(--accent-light); }
+    .section-label.purple { color: var(--purple); background: #F5F0FF; }
 
-    .opt-btn.correct {
-      background: rgba(74,222,128,0.18);
-      border-color: #4ade80;
-      color: #4ade80;
-      animation: popCorrect 0.45s ease;
-    }
-    .opt-btn.wrong {
-      background: rgba(248,113,113,0.18);
-      border-color: #f87171;
-      color: #f87171;
-      animation: shakeWrong 0.4s ease;
-    }
-    @keyframes popCorrect {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.06); }
-      100% { transform: scale(1); }
-    }
-    @keyframes shakeWrong {
-      0%,100% { transform: translateX(0); }
-      20%     { transform: translateX(-7px); }
-      50%     { transform: translateX(7px); }
-      80%     { transform: translateX(-4px); }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 16px;
     }
 
-    .hint-line {
-      text-align: center;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.45);
-      min-height: 22px;
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--text-light);
+      max-width: 600px;
     }
-
-    /* ── FEEDBACK OVERLAY ── */
-    .feedback-overlay {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      z-index: 300;
-    }
-    .feedback-emoji {
-      font-size: 7rem;
-      opacity: 0;
-      transform: scale(0.3);
-      transition: none;
-    }
-    .feedback-emoji.pop {
-      animation: feedPop 0.75s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    }
-    @keyframes feedPop {
-      0%   { opacity: 1; transform: scale(0.3); }
-      40%  { opacity: 1; transform: scale(1.15); }
-      70%  { opacity: 1; transform: scale(1.0); }
-      100% { opacity: 0; transform: scale(0.8) translateY(-40px); }
-    }
-
-    /* ── RESULT ── */
-    #screen-result { max-width: 580px; margin: 0 auto; text-align: center; padding-top: 60px; }
-
-    .res-emoji { font-size: 5rem; display: block; margin-bottom: 18px; animation: bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
-    @keyframes bounceIn { from { transform: scale(0); } to { transform: scale(1); } }
-
-    .res-title { font-size: 2.4rem; font-weight: 900; margin-bottom: 8px; }
-    .res-sub { color: rgba(255,255,255,0.55); margin-bottom: 30px; font-size: 1rem; }
-
-    .res-stars {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      font-size: 3.2rem;
-      margin-bottom: 32px;
-    }
-    .res-star {
-      display: inline-block;
-      animation: starBoom 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-    @keyframes starBoom {
-      from { transform: scale(0) rotate(-30deg); opacity: 0; }
-      to   { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-    .stat-box {
-      background: rgba(255,255,255,0.065);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 18px;
-      padding: 20px 10px;
-    }
-    .stat-val { font-size: 2rem; font-weight: 900; color: #fbbf24; }
-    .stat-lbl { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 4px; }
-
-    /* ── GAMEOVER ── */
-    #screen-gameover { max-width: 500px; margin: 0 auto; text-align: center; padding-top: 90px; }
-
-    /* ── BUTTONS ── */
-    .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 15px 30px;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 700;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
       cursor: pointer;
       border: none;
-      font-family: inherit;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
+
     .btn-primary {
-      background: linear-gradient(135deg, #4ade80, #22d3ee);
-      color: #080818;
-    }
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(74,222,128,0.35); }
-    .btn-ghost {
-      background: rgba(255,255,255,0.08);
+      background: var(--primary);
       color: #fff;
-      border: 1.5px solid rgba(255,255,255,0.15);
+      box-shadow: 0 6px 20px rgba(43,127,212,0.35);
     }
-    .btn-ghost:hover { background: rgba(255,255,255,0.16); transform: translateY(-3px); }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(43,127,212,0.4); }
 
-    /* ── CONFETTI ── */
-    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
-    .confetti-piece {
+    .btn-secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .btn-secondary:hover { background: var(--primary-light); transform: translateY(-2px); }
+
+    .btn-white {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.18); }
+
+    .btn-accent {
+      background: var(--secondary);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(61,196,154,0.35);
+    }
+    .btn-accent:hover { background: var(--secondary-dark); transform: translateY(-2px); }
+
+    /* ──────────────────── NAVBAR ──────────────────── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+
+    .logo-text { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text); }
+    .logo-text span { color: var(--primary); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+
+    .nav-phone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .burger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .burger span { display: block; width: 24px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; transition: all 0.3s; }
+
+    /* ──────────────────── HERO ──────────────────── */
+    .hero {
+      min-height: 100vh;
+      padding-top: 70px;
+      background: linear-gradient(160deg, #EBF4FF 0%, #EDFAF4 50%, #FFF3EF 100%);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
       position: absolute;
-      top: -16px;
-      border-radius: 2px;
-      animation: cFall linear forwards;
+      top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(43,127,212,0.08) 0%, transparent 70%);
+      border-radius: 50%;
     }
-    @keyframes cFall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
 
-    /* ── RESPONSIVE ── */
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      padding: 80px 0;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--secondary-dark);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-badge i { color: var(--secondary); }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 20px;
+      line-height: 1.15;
+    }
+
+    .hero h1 span { color: var(--primary); }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 36px;
+      max-width: 520px;
+      line-height: 1.8;
+    }
+
+    .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .stat-label { font-size: 0.8rem; color: var(--text-light); font-weight: 600; margin-top: 4px; }
+
+    .hero-visual {
+      position: relative;
+    }
+
+    .hero-img-wrap {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      aspect-ratio: 4/5;
+    }
+
+    .hero-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-card {
+      position: absolute;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-card-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .hero-card-icon.blue { background: var(--primary-light); color: var(--primary); }
+    .hero-card-icon.green { background: #EDFAF4; color: var(--secondary-dark); }
+    .hero-card-icon.orange { background: var(--accent-light); color: var(--accent); }
+
+    .hero-card-text .card-title { font-weight: 800; font-size: 0.85rem; color: var(--text); }
+    .hero-card-text .card-sub { font-size: 0.75rem; color: var(--text-light); }
+
+    .card-top-left { top: -20px; left: -30px; }
+    .card-bottom-right { bottom: 20px; right: -30px; }
+    .card-bottom-left { bottom: -20px; left: 20px; }
+
+    /* ──────────────────── PARTENAIRES ──────────────────── */
+    .partners {
+      padding: 40px 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .partners-label {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+
+    .partners-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .partner-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #94A3B8;
+      transition: color 0.2s;
+    }
+    .partner-item:hover { color: var(--text-light); }
+    .partner-item i { font-size: 1.1rem; }
+
+    /* ──────────────────── WHY US ──────────────────── */
+    .why-us {
+      padding: 100px 0;
+      background: var(--bg-soft);
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .why-img-wrap {
+      position: relative;
+    }
+
+    .why-img-main {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .why-img-main img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+    }
+
+    .why-badge-wrap {
+      position: absolute;
+      bottom: -24px;
+      right: -24px;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .why-badge-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      color: #fff;
+    }
+
+    .why-badge-text .title { font-weight: 800; font-size: 1rem; color: var(--text); }
+    .why-badge-text .sub { font-size: 0.8rem; color: var(--text-light); }
+
+    .why-points {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .why-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: all 0.25s ease;
+    }
+    .why-point:hover { border-color: var(--primary); box-shadow: var(--shadow); transform: translateX(4px); }
+
+    .why-point-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .why-point-icon.blue { background: var(--primary-light); color: var(--primary); }
+    .why-point-icon.green { background: #EDFAF4; color: var(--secondary-dark); }
+    .why-point-icon.orange { background: var(--accent-light); color: var(--accent); }
+    .why-point-icon.purple { background: #F5F0FF; color: var(--purple); }
+
+    .why-point-body .title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+    .why-point-body p { font-size: 0.85rem; color: var(--text-light); }
+
+    /* ──────────────────── SERVICES ──────────────────── */
+    .services {
+      padding: 100px 0;
+      background: var(--bg);
+    }
+
+    .services-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .services-header .section-sub { margin: 0 auto; }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .service-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .service-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-6px); border-color: transparent; }
+
+    .service-img {
+      height: 200px;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .service-body {
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .service-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
+
+    .service-tag.blue { background: var(--primary-light); color: var(--primary); }
+    .service-tag.green { background: #EDFAF4; color: var(--secondary-dark); }
+    .service-tag.orange { background: var(--accent-light); color: var(--accent); }
+    .service-tag.purple { background: #F5F0FF; color: var(--purple); }
+    .service-tag.yellow { background: #FFF8E1; color: #F59E0B; }
+    .service-tag.pink { background: #FFF0F5; color: #E91E8C; }
+
+    .service-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 10px; }
+    .service-desc { font-size: 0.88rem; color: var(--text-light); line-height: 1.7; flex: 1; }
+
+    .service-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--primary);
+      margin-top: 16px;
+      transition: gap 0.2s;
+    }
+    .service-link:hover { gap: 10px; }
+
+    /* ──────────────────── SWOT SECTION ──────────────────── */
+    .swot-section {
+      padding: 80px 0;
+      background: var(--bg-soft);
+    }
+
+    .swot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .swot-card {
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+
+    .swot-card.forces { background: linear-gradient(135deg, #EDFAF4, #D0F5E8); }
+    .swot-card.faiblesses { background: linear-gradient(135deg, #FFF8E1, #FEF3C7); }
+    .swot-card.opportunites { background: linear-gradient(135deg, #EBF4FF, #DBEAFE); }
+    .swot-card.menaces { background: linear-gradient(135deg, #FFF0F5, #FCE7F3); }
+
+    .swot-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .swot-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .forces .swot-icon { background: var(--secondary); color: #fff; }
+    .faiblesses .swot-icon { background: var(--yellow); color: #fff; }
+    .opportunites .swot-icon { background: var(--primary); color: #fff; }
+    .menaces .swot-icon { background: #E91E63; color: #fff; }
+
+    .swot-title { font-weight: 800; font-size: 1rem; }
+
+    .swot-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .swot-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .swot-list li i {
+      margin-top: 2px;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    .forces .swot-list li i { color: var(--secondary-dark); }
+    .faiblesses .swot-list li i { color: #D97706; }
+    .opportunites .swot-list li i { color: var(--primary); }
+    .menaces .swot-list li i { color: #BE185D; }
+
+    /* ──────────────────── EQUIPE ──────────────────── */
+    .team {
+      padding: 100px 0;
+      background: var(--bg);
+    }
+
+    .team-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .team-header .section-sub { margin: 0 auto; }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .team-card {
+      background: var(--bg-soft);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    .team-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-6px); border-color: transparent; }
+
+    .team-img-wrap {
+      height: 200px;
+      background: linear-gradient(135deg, var(--primary-light), #EDFAF4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      color: var(--primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #fff;
+      border-radius: 100px;
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--secondary-dark);
+    }
+
+    .team-body { padding: 20px; }
+    .team-name { font-weight: 800; font-size: 1rem; margin-bottom: 4px; }
+    .team-role { font-size: 0.8rem; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
+    .team-desc { font-size: 0.8rem; color: var(--text-light); line-height: 1.6; }
+    .team-social {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .team-social a {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .team-social a:hover { background: var(--primary); color: #fff; }
+
+    /* ──────────────────── TARIFS ──────────────────── */
+    .tarifs {
+      padding: 100px 0;
+      background: linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tarifs::before {
+      content: '';
+      position: absolute;
+      top: -150px; right: -150px;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .tarifs-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .tarifs-header .section-title { color: #fff; }
+    .tarifs-header .section-sub { color: rgba(255,255,255,0.75); }
+    .tarifs-header .section-label { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .tarifs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .tarif-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .tarif-card:hover { background: rgba(255,255,255,0.18); transform: translateY(-6px); }
+
+    .tarif-card.featured {
+      background: #fff;
+      border-color: #fff;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .tarif-featured-label {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--secondary);
+      color: #fff;
+      padding: 4px 16px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tarif-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .tarif-card.featured .tarif-icon { background: var(--primary-light); color: var(--primary); }
+
+    .tarif-name {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 8px;
+    }
+    .tarif-card.featured .tarif-name { color: var(--text); }
+
+    .tarif-price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .tarif-amount {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .tarif-card.featured .tarif-amount { color: var(--primary); }
+    .tarif-unit { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+    .tarif-card.featured .tarif-unit { color: var(--text-light); }
+
+    .tarif-remb {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tarif-card.featured .tarif-remb { color: var(--text-light); }
+    .tarif-remb i { color: var(--secondary); }
+
+    .tarif-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .tarif-features li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .tarif-card.featured .tarif-features li { color: var(--text); }
+    .tarif-features li i { color: var(--secondary); font-size: 0.8rem; }
+
+    .tarif-btn {
+      width: 100%;
+      justify-content: center;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .tarif-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+    .tarif-card.featured .tarif-btn { background: var(--primary); border: none; }
+    .tarif-card.featured .tarif-btn:hover { background: var(--primary-dark); }
+
+    /* ──────────────────── TEMOIGNAGES ──────────────────── */
+    .temoignages {
+      padding: 100px 0;
+      background: var(--bg-soft);
+    }
+
+    .temoignages-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .temoignages-header .section-sub { margin: 0 auto; }
+
+    .temo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .temo-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: all 0.3s ease;
+    }
+    .temo-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); border-color: transparent; }
+
+    .temo-stars {
+      display: flex;
+      gap: 3px;
+      color: #FFB300;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+    }
+
+    .temo-text {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .temo-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .temo-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .temo-name { font-weight: 700; font-size: 0.9rem; }
+    .temo-info { font-size: 0.78rem; color: var(--text-light); }
+
+    /* ──────────────────── BLOG ──────────────────── */
+    .blog {
+      padding: 100px 0;
+      background: var(--bg);
+    }
+
+    .blog-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 24px;
+    }
+
+    .blog-card {
+      background: var(--bg-soft);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .blog-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); border-color: transparent; }
+
+    .blog-img {
+      height: 200px;
+      width: 100%;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--primary-light), #EDFAF4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .blog-card-main .blog-img { height: 280px; }
+
+    .blog-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+
+    .blog-cat {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .blog-title {
+      font-weight: 800;
+      font-size: 1rem;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .blog-card-main .blog-title { font-size: 1.25rem; }
+
+    .blog-excerpt {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .blog-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    .blog-meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* ──────────────────── RDV SECTION ──────────────────── */
+    .rdv-section {
+      padding: 100px 0;
+      background: var(--bg-soft);
+    }
+
+    .rdv-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .rdv-info h2 { margin-bottom: 16px; }
+    .rdv-info .section-sub { margin-bottom: 36px; }
+
+    .contact-items {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .contact-item-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .contact-item-icon.blue { background: var(--primary-light); color: var(--primary); }
+    .contact-item-icon.green { background: #EDFAF4; color: var(--secondary-dark); }
+    .contact-item-icon.orange { background: var(--accent-light); color: var(--accent); }
+
+    .contact-item-label { font-size: 0.75rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+    .contact-item-value { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+
+    .social-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .social-row p { font-size: 0.85rem; font-weight: 700; color: var(--text-light); }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      transition: all 0.25s;
+    }
+
+    .social-btn.instagram {
+      background: linear-gradient(135deg, #F58529, #DD2A7B, #515BD4);
+      color: #fff;
+    }
+    .social-btn.facebook { background: #1877F2; color: #fff; }
+    .social-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    .rdv-form-wrap {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    .form-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .form-sub { font-size: 0.85rem; color: var(--text-light); margin-bottom: 28px; }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--bg-soft);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(43,127,212,0.12);
+      background: #fff;
+    }
+
+    textarea { height: 100px; resize: vertical; }
+
+    .form-submit {
+      width: 100%;
+      justify-content: center;
+      font-size: 1rem;
+      padding: 16px;
+    }
+
+    .form-note {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* ──────────────────── MAP ──────────────────── */
+    .map-section {
+      height: 360px;
+      background: linear-gradient(135deg, #EBF4FF, #EDFAF4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-placeholder {
+      text-align: center;
+    }
+    .map-placeholder i { font-size: 3rem; color: var(--primary); margin-bottom: 12px; }
+    .map-placeholder h3 { font-size: 1.2rem; margin-bottom: 6px; }
+    .map-placeholder p { color: var(--text-light); font-size: 0.9rem; }
+
+    /* ──────────────────── CTA BANNER ──────────────────── */
+    .cta-banner {
+      padding: 80px 0;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: -100px;
+      width: 400px; height: 400px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 50%;
+    }
+
+    .cta-banner h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .cta-banner p { color: rgba(255,255,255,0.8); font-size: 1.05rem; margin-bottom: 36px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-banner .cta-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+    /* ──────────────────── FOOTER ──────────────────── */
+    .footer {
+      background: #0F172A;
+      color: rgba(255,255,255,0.75);
+      padding: 70px 0 28px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+    }
+
+    .footer-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .footer-logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+    .footer-logo-text { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.1rem; color: #fff; }
+
+    .footer-desc { font-size: 0.85rem; line-height: 1.7; margin-bottom: 20px; }
+
+    .footer-social { display: flex; gap: 10px; }
+    .footer-social a {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .footer-social a:hover { background: var(--primary); color: #fff; }
+
+    .footer-col-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 0.85rem; color: rgba(255,255,255,0.6); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--primary); }
+
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+    }
+    .footer-contact-item i { color: var(--primary); margin-top: 2px; flex-shrink: 0; }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .footer-bottom-links { display: flex; gap: 20px; }
+    .footer-bottom-links a { color: rgba(255,255,255,0.5); transition: color 0.2s; }
+    .footer-bottom-links a:hover { color: var(--primary); }
+
+    /* ──────────────────── FLOATING RDV ──────────────────── */
+    .floating-rdv {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+    }
+
+    .floating-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 8px 24px rgba(43,127,212,0.45);
+      cursor: pointer;
+      transition: all 0.25s;
+      border: none;
+      animation: pulse-btn 3s ease-in-out infinite;
+    }
+    .floating-btn:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(43,127,212,0.5); }
+
+    @keyframes pulse-btn {
+      0%, 100% { box-shadow: 0 8px 24px rgba(43,127,212,0.45); }
+      50% { box-shadow: 0 8px 40px rgba(43,127,212,0.65), 0 0 0 6px rgba(43,127,212,0.1); }
+    }
+
+    /* ──────────────────── MOBILE MENU ──────────────────── */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 998;
+      backdrop-filter: blur(4px);
+    }
+
+    .mobile-menu-inner {
+      position: absolute;
+      top: 0; right: 0;
+      width: min(320px, 85vw);
+      height: 100vh;
+      background: #fff;
+      padding: 80px 32px 32px;
+      box-shadow: -20px 0 60px rgba(0,0,0,0.2);
+    }
+
+    .mobile-menu-links { list-style: none; display: flex; flex-direction: column; gap: 24px; margin-bottom: 32px; }
+    .mobile-menu-links a { font-weight: 700; font-size: 1.1rem; color: var(--text); }
+
+    .mobile-menu.open { display: block; }
+
+    /* ──────────────────── ANIMATIONS ──────────────────── */
+    [data-aos] {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    [data-aos].aos-animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    [data-aos="fade-right"] { transform: translateX(-24px); }
+    [data-aos="fade-right"].aos-animate { transform: translateX(0); }
+    [data-aos="fade-left"] { transform: translateX(24px); }
+    [data-aos="fade-left"].aos-animate { transform: translateX(0); }
+
+    /* ──────────────────── RESPONSIVE ──────────────────── */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { display: none; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .tarifs-grid { grid-template-columns: 1fr 1fr; }
+      .temo-grid { grid-template-columns: 1fr 1fr; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .why-img-wrap { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .burger { display: block; }
+      .services-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .tarifs-grid { grid-template-columns: 1fr; }
+      .temo-grid { grid-template-columns: 1fr; }
+      .swot-grid { grid-template-columns: 1fr; }
+      .rdv-inner { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .blog-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .hero-stats { gap: 20px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 480px) {
-      .opts-grid { grid-template-columns: 1fr; }
-      .stats-row { grid-template-columns: 1fr 1fr; }
-      .game-topbar { flex-wrap: wrap; justify-content: center; }
+      .team-grid { grid-template-columns: 1fr; }
+      .floating-btn span { display: none; }
+      .floating-btn { padding: 14px; border-radius: 50%; }
     }
   </style>
 </head>
 <body>
 
-<div class="stars" id="stars"></div>
-<div class="feedback-overlay"><div class="feedback-emoji" id="feedback"></div></div>
-<div class="confetti-wrap" id="confetti"></div>
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#" class="logo">
+          <div class="logo-icon"><i class="fas fa-child"></i></div>
+          <span class="logo-text">Kiné<span>Pédi</span></span>
+        </a>
 
-<!-- HOME -->
-<div class="screen active" id="screen-home">
-  <div id="home-content"></div>
-</div>
+        <ul class="nav-links">
+          <li><a href="#services">Nos soins</a></li>
+          <li><a href="#equipe">L'équipe</a></li>
+          <li><a href="#tarifs">Tarifs</a></li>
+          <li><a href="#blog">Conseils</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
 
-<!-- GAME -->
-<div class="screen" id="screen-game">
-  <div class="game-topbar">
-    <div class="lives" id="lives"></div>
-    <div class="hud-score">
-      <div class="hud-label">Score</div>
-      <div class="hud-value" id="hud-score">0</div>
-    </div>
-    <div class="hud-streak">
-      <div class="hud-label">Série</div>
-      <div class="streak-val" id="hud-streak">—</div>
-    </div>
-  </div>
-
-  <div class="prog-wrap">
-    <div class="prog-fill" id="prog-fill" style="width:0%"></div>
-  </div>
-
-  <div class="timer-wrap">
-    <div class="timer-bar" id="timer-bar" style="width:100%"></div>
-    <div class="timer-txt" id="timer-txt">20s</div>
-  </div>
-
-  <div class="q-card" id="q-card">
-    <div class="q-label">Quelle est la capitale de…</div>
-    <div class="q-num" id="q-num">Question 1 / 20</div>
-    <span class="q-flag" id="q-flag">🌍</span>
-    <div class="q-country" id="q-country"></div>
-  </div>
-
-  <div class="opts-grid" id="opts-grid"></div>
-  <div class="hint-line" id="hint-line"></div>
-</div>
-
-<!-- RESULT -->
-<div class="screen" id="screen-result">
-  <div id="result-content"></div>
-</div>
-
-<!-- GAMEOVER -->
-<div class="screen" id="screen-gameover">
-  <div id="gameover-content"></div>
-</div>
-
-<script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
-
-const LEVELS = [
-  {
-    name: "Explorateur",
-    emoji: "🌱",
-    color: "#4ade80",
-    shadow: "rgba(74,222,128,0.25)",
-    glow: "rgba(74,222,128,1)",
-    desc: "Les grandes capitales mondiales",
-    questions: [
-      { country:"France",         flag:"🇫🇷", capital:"Paris" },
-      { country:"Allemagne",      flag:"🇩🇪", capital:"Berlin" },
-      { country:"États-Unis",     flag:"🇺🇸", capital:"Washington D.C." },
-      { country:"Royaume-Uni",    flag:"🇬🇧", capital:"Londres" },
-      { country:"Japon",          flag:"🇯🇵", capital:"Tokyo" },
-      { country:"Italie",         flag:"🇮🇹", capital:"Rome" },
-      { country:"Espagne",        flag:"🇪🇸", capital:"Madrid" },
-      { country:"Canada",         flag:"🇨🇦", capital:"Ottawa" },
-      { country:"Australie",      flag:"🇦🇺", capital:"Canberra" },
-      { country:"Brésil",         flag:"🇧🇷", capital:"Brasília" },
-      { country:"Chine",          flag:"🇨🇳", capital:"Pékin" },
-      { country:"Russie",         flag:"🇷🇺", capital:"Moscou" },
-      { country:"Inde",           flag:"🇮🇳", capital:"New Delhi" },
-      { country:"Mexique",        flag:"🇲🇽", capital:"Mexico" },
-      { country:"Argentine",      flag:"🇦🇷", capital:"Buenos Aires" },
-      { country:"Égypte",         flag:"🇪🇬", capital:"Le Caire" },
-      { country:"Afrique du Sud", flag:"🇿🇦", capital:"Pretoria" },
-      { country:"Corée du Sud",   flag:"🇰🇷", capital:"Séoul" },
-      { country:"Arabie Saoudite",flag:"🇸🇦", capital:"Riyad" },
-      { country:"Turquie",        flag:"🇹🇷", capital:"Ankara" },
-    ]
-  },
-  {
-    name: "Voyageur",
-    emoji: "✈️",
-    color: "#60a5fa",
-    shadow: "rgba(96,165,250,0.25)",
-    glow: "rgba(96,165,250,1)",
-    desc: "Europe & Amériques",
-    questions: [
-      { country:"Suède",              flag:"🇸🇪", capital:"Stockholm" },
-      { country:"Norvège",            flag:"🇳🇴", capital:"Oslo" },
-      { country:"Danemark",           flag:"🇩🇰", capital:"Copenhague" },
-      { country:"Finlande",           flag:"🇫🇮", capital:"Helsinki" },
-      { country:"Portugal",           flag:"🇵🇹", capital:"Lisbonne" },
-      { country:"Pays-Bas",           flag:"🇳🇱", capital:"Amsterdam" },
-      { country:"Belgique",           flag:"🇧🇪", capital:"Bruxelles" },
-      { country:"Suisse",             flag:"🇨🇭", capital:"Berne" },
-      { country:"Autriche",           flag:"🇦🇹", capital:"Vienne" },
-      { country:"Grèce",              flag:"🇬🇷", capital:"Athènes" },
-      { country:"Pologne",            flag:"🇵🇱", capital:"Varsovie" },
-      { country:"Rép. Tchèque",       flag:"🇨🇿", capital:"Prague" },
-      { country:"Hongrie",            flag:"🇭🇺", capital:"Budapest" },
-      { country:"Roumanie",           flag:"🇷🇴", capital:"Bucarest" },
-      { country:"Ukraine",            flag:"🇺🇦", capital:"Kiev" },
-      { country:"Maroc",              flag:"🇲🇦", capital:"Rabat" },
-      { country:"Colombie",           flag:"🇨🇴", capital:"Bogotá" },
-      { country:"Venezuela",          flag:"🇻🇪", capital:"Caracas" },
-      { country:"Pérou",              flag:"🇵🇪", capital:"Lima" },
-      { country:"Chili",              flag:"🇨🇱", capital:"Santiago" },
-      { country:"Thaïlande",          flag:"🇹🇭", capital:"Bangkok" },
-      { country:"Viêt Nam",           flag:"🇻🇳", capital:"Hanoï" },
-      { country:"Iran",               flag:"🇮🇷", capital:"Téhéran" },
-      { country:"Irak",               flag:"🇮🇶", capital:"Bagdad" },
-      { country:"Israël",             flag:"🇮🇱", capital:"Jérusalem" },
-    ]
-  },
-  {
-    name: "Géographe",
-    emoji: "🗺️",
-    color: "#fb923c",
-    shadow: "rgba(251,146,60,0.25)",
-    glow: "rgba(251,146,60,1)",
-    desc: "Afrique & Asie profonde",
-    questions: [
-      { country:"Éthiopie",       flag:"🇪🇹", capital:"Addis-Abeba" },
-      { country:"Ghana",          flag:"🇬🇭", capital:"Accra" },
-      { country:"Kenya",          flag:"🇰🇪", capital:"Nairobi" },
-      { country:"Tanzanie",       flag:"🇹🇿", capital:"Dodoma" },
-      { country:"Sénégal",        flag:"🇸🇳", capital:"Dakar" },
-      { country:"Côte d'Ivoire",  flag:"🇨🇮", capital:"Yamoussoukro" },
-      { country:"Cameroun",       flag:"🇨🇲", capital:"Yaoundé" },
-      { country:"Mozambique",     flag:"🇲🇿", capital:"Maputo" },
-      { country:"Zambie",         flag:"🇿🇲", capital:"Lusaka" },
-      { country:"Zimbabwe",       flag:"🇿🇼", capital:"Harare" },
-      { country:"Madagascar",     flag:"🇲🇬", capital:"Antananarivo" },
-      { country:"Soudan",         flag:"🇸🇩", capital:"Khartoum" },
-      { country:"Libye",          flag:"🇱🇾", capital:"Tripoli" },
-      { country:"Ouzbékistan",    flag:"🇺🇿", capital:"Tachkent" },
-      { country:"Kazakhstan",     flag:"🇰🇿", capital:"Astana" },
-      { country:"Géorgie",        flag:"🇬🇪", capital:"Tbilissi" },
-      { country:"Arménie",        flag:"🇦🇲", capital:"Erevan" },
-      { country:"Azerbaïdjan",    flag:"🇦🇿", capital:"Bakou" },
-      { country:"Mongolie",       flag:"🇲🇳", capital:"Oulan-Bator" },
-      { country:"Népal",          flag:"🇳🇵", capital:"Katmandou" },
-      { country:"Sri Lanka",      flag:"🇱🇰", capital:"Kotte" },
-      { country:"Myanmar",        flag:"🇲🇲", capital:"Naypyidaw" },
-      { country:"Laos",           flag:"🇱🇦", capital:"Vientiane" },
-      { country:"Cambodge",       flag:"🇰🇭", capital:"Phnom Penh" },
-      { country:"Maurice",        flag:"🇲🇺", capital:"Port-Louis" },
-    ]
-  },
-  {
-    name: "Expert Mondial",
-    emoji: "🏆",
-    color: "#a78bfa",
-    shadow: "rgba(167,139,250,0.25)",
-    glow: "rgba(167,139,250,1)",
-    desc: "Les capitales les plus rares",
-    questions: [
-      { country:"Turkménistan",           flag:"🇹🇲", capital:"Achgabat" },
-      { country:"Tadjikistan",            flag:"🇹🇯", capital:"Douchanbé" },
-      { country:"Kirghizistan",           flag:"🇰🇬", capital:"Bichkek" },
-      { country:"Timor oriental",         flag:"🇹🇱", capital:"Dili" },
-      { country:"Palaos",                 flag:"🇵🇼", capital:"Ngerulmud" },
-      { country:"Îles Marshall",          flag:"🇲🇭", capital:"Majuro" },
-      { country:"Micronésie",             flag:"🇫🇲", capital:"Palikir" },
-      { country:"Nauru",                  flag:"🇳🇷", capital:"Yaren" },
-      { country:"Tuvalu",                 flag:"🇹🇻", capital:"Funafuti" },
-      { country:"Kiribati",               flag:"🇰🇮", capital:"Tarawa-Sud" },
-      { country:"Vanuatu",                flag:"🇻🇺", capital:"Port-Vila" },
-      { country:"Îles Salomon",           flag:"🇸🇧", capital:"Honiara" },
-      { country:"Papouasie-N.-Guinée",    flag:"🇵🇬", capital:"Port Moresby" },
-      { country:"Fidji",                  flag:"🇫🇯", capital:"Suva" },
-      { country:"Samoa",                  flag:"🇼🇸", capital:"Apia" },
-      { country:"Tonga",                  flag:"🇹🇴", capital:"Nuku'alofa" },
-      { country:"Comores",                flag:"🇰🇲", capital:"Moroni" },
-      { country:"Sao Tomé-et-Principe",   flag:"🇸🇹", capital:"São Tomé" },
-      { country:"Cap-Vert",               flag:"🇨🇻", capital:"Praia" },
-      { country:"Djibouti",               flag:"🇩🇯", capital:"Djibouti" },
-      { country:"Bhoutan",                flag:"🇧🇹", capital:"Thimphu" },
-      { country:"Maldives",               flag:"🇲🇻", capital:"Malé" },
-      { country:"Guinée",                 flag:"🇬🇳", capital:"Conakry" },
-      { country:"Guinée équatoriale",     flag:"🇬🇶", capital:"Malabo" },
-      { country:"Érythrée",               flag:"🇪🇷", capital:"Asmara" },
-    ]
-  }
-];
-
-const TIMER_SECONDS = 20;
-const MAX_LIVES = 3;
-
-// ── STATE ────────────────────────────────────────────────────────────────────
-
-let G = {
-  lvlIdx: 0, qIdx: 0,
-  questions: [], options: [],
-  score: 0, lives: MAX_LIVES,
-  streak: 0, maxStreak: 0,
-  wrongCount: 0,
-  answered: false,
-  timerVal: TIMER_SECONDS,
-  timerID: null,
-};
-
-let progress = {};
-try { progress = JSON.parse(localStorage.getItem('geoquiz_v2') || '{}'); } catch(e) {}
-
-// ── UTILS ────────────────────────────────────────────────────────────────────
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = 0 | Math.random() * (i + 1);
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function save() {
-  try { localStorage.setItem('geoquiz_v2', JSON.stringify(progress)); } catch(e) {}
-}
-
-function stars(li) { return progress[li]?.stars || 0; }
-function best(li)  { return progress[li]?.best  || 0; }
-
-function totalStars() {
-  return Object.values(progress).reduce((s, p) => s + (p.stars || 0), 0);
-}
-
-function calcStars(wrong, total) {
-  const ratio = (total - wrong) / total;
-  if (ratio >= 0.9) return 3;
-  if (ratio >= 0.68) return 2;
-  return 1;
-}
-
-function wrongOptions(correct, lvlIdx) {
-  const pool = shuffle(
-    LEVELS[lvlIdx].questions
-      .map(q => q.capital)
-      .filter(c => c !== correct)
-  );
-  const extra = shuffle(
-    LEVELS.flatMap((l, i) => i === lvlIdx ? [] : l.questions.map(q => q.capital))
-      .filter(c => c !== correct)
-  );
-  const result = [];
-  for (const c of [...pool, ...extra]) {
-    if (!result.includes(c)) result.push(c);
-    if (result.length === 3) break;
-  }
-  return result;
-}
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function popFeedback(emoji) {
-  const el = document.getElementById('feedback');
-  el.textContent = emoji;
-  el.classList.remove('pop');
-  void el.offsetWidth;
-  el.classList.add('pop');
-  setTimeout(() => el.classList.remove('pop'), 800);
-}
-
-function fireConfetti() {
-  const wrap = document.getElementById('confetti');
-  wrap.innerHTML = '';
-  const colors = ['#fbbf24','#4ade80','#60a5fa','#f87171','#a78bfa','#fb923c','#fff'];
-  for (let i = 0; i < 90; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-piece';
-    p.style.cssText = `
-      left: ${Math.random() * 100}vw;
-      width: ${4 + Math.random() * 9}px;
-      height: ${6 + Math.random() * 10}px;
-      background: ${colors[0 | Math.random() * colors.length]};
-      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-      animation-duration: ${1.8 + Math.random() * 2}s;
-      animation-delay: ${Math.random() * 0.8}s;
-    `;
-    wrap.appendChild(p);
-  }
-  setTimeout(() => wrap.innerHTML = '', 4000);
-}
-
-// ── HOME ─────────────────────────────────────────────────────────────────────
-
-function renderHome() {
-  clearInterval(G.timerID);
-  const ts = totalStars(), ms = LEVELS.length * 3;
-  const done = Object.keys(progress).length;
-
-  let html = `
-    <div class="home-hero">
-      <h1 class="home-title">GéoQuiz</h1>
-      <p class="home-sub">Capitales du Monde &middot; 90 pays &middot; 4 niveaux</p>
-      <div class="home-badges">
-        <span>⭐ ${ts} / ${ms} étoiles</span>
-        <span>🏅 ${done} / 4 niveaux</span>
-      </div>
-    </div>
-    <p class="section-label">Choisissez votre niveau</p>
-    <div class="levels-grid">
-  `;
-
-  LEVELS.forEach((lv, i) => {
-    const locked = i > 0 && !progress[i - 1];
-    const s = stars(i), b = best(i);
-    html += `
-      <div class="level-card ${locked ? 'locked' : ''}"
-           style="--accent:${lv.color};--shadow:${lv.shadow};--glow:${lv.glow}"
-           ${locked ? '' : `onclick="startLevel(${i})"`}>
-        ${locked ? '<div class="lock-overlay">🔒</div>' : ''}
-        <span class="level-emoji">${lv.emoji}</span>
-        <div class="level-name" style="color:${lv.color}">${lv.name}</div>
-        <div class="level-desc">${lv.desc}</div>
-        <div class="level-stars">
-          ${[1,2,3].map(n => `<span class="${n<=s?'':'star-off'}">⭐</span>`).join('')}
+        <div class="nav-cta">
+          <div class="nav-phone"><i class="fas fa-phone" style="color:var(--primary)"></i> 01 23 45 67 89</div>
+          <a href="#rdv" class="btn btn-primary">Prendre RDV</a>
         </div>
-        <div class="level-info">${lv.questions.length} questions · 3 vies · 20 s/question</div>
-        ${b > 0 ? `<div class="level-best">Record : ${b} pts</div>` : ''}
+
+        <button class="burger" id="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-    `;
-  });
-
-  html += '</div>';
-  document.getElementById('home-content').innerHTML = html;
-  showScreen('home');
-}
-
-// ── GAME ─────────────────────────────────────────────────────────────────────
-
-function startLevel(li) {
-  G = {
-    lvlIdx: li,
-    qIdx: 0,
-    questions: shuffle(LEVELS[li].questions),
-    options: [],
-    score: 0,
-    lives: MAX_LIVES,
-    streak: 0,
-    maxStreak: 0,
-    wrongCount: 0,
-    answered: false,
-    timerVal: TIMER_SECONDS,
-    timerID: null,
-  };
-  showScreen('game');
-  renderQuestion();
-}
-
-function renderQuestion() {
-  if (G.qIdx >= G.questions.length) { endLevel(); return; }
-
-  G.answered = false;
-  const q = G.questions[G.qIdx];
-
-  // Refresh card animation
-  const card = document.getElementById('q-card');
-  card.style.animation = 'none';
-  void card.offsetWidth;
-  card.style.animation = '';
-
-  document.getElementById('q-flag').textContent    = q.flag;
-  document.getElementById('q-country').textContent = q.country;
-  document.getElementById('q-num').textContent     =
-    `Question ${G.qIdx + 1} / ${G.questions.length}`;
-
-  G.options = shuffle([q.capital, ...wrongOptions(q.capital, G.lvlIdx)]);
-
-  const grid = document.getElementById('opts-grid');
-  grid.innerHTML = '';
-  G.options.forEach((opt, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'opt-btn';
-    btn.textContent = opt;
-    btn.dataset.idx = idx;
-    btn.addEventListener('click', () => pick(idx));
-    grid.appendChild(btn);
-  });
-
-  document.getElementById('hint-line').textContent = '';
-  updateHUD();
-  startTimer();
-}
-
-function updateHUD() {
-  // Lives
-  document.getElementById('lives').innerHTML =
-    [1,2,3].map(n => `<span class="life ${n > G.lives ? 'lost' : ''}">❤️</span>`).join('');
-
-  // Score
-  document.getElementById('hud-score').textContent = G.score;
-
-  // Streak
-  const el = document.getElementById('hud-streak');
-  if (G.streak >= 3) {
-    el.textContent = `🔥×${G.streak}`;
-    el.className = 'streak-val hot';
-  } else if (G.streak > 0) {
-    el.textContent = `✨ ${G.streak}`;
-    el.className = 'streak-val';
-  } else {
-    el.textContent = '—';
-    el.className = 'streak-val';
-  }
-
-  // Progress
-  document.getElementById('prog-fill').style.width =
-    (G.qIdx / G.questions.length * 100) + '%';
-}
-
-function startTimer() {
-  clearInterval(G.timerID);
-  G.timerVal = TIMER_SECONDS;
-  drawTimer();
-  G.timerID = setInterval(() => {
-    G.timerVal--;
-    drawTimer();
-    if (G.timerVal <= 0) { clearInterval(G.timerID); timeOut(); }
-  }, 1000);
-}
-
-function drawTimer() {
-  const pct = G.timerVal / TIMER_SECONDS * 100;
-  const bar = document.getElementById('timer-bar');
-  bar.style.width = pct + '%';
-  bar.style.background =
-    G.timerVal <= 5  ? '#f87171' :
-    G.timerVal <= 10 ? '#fbbf24' :
-    'linear-gradient(90deg, #f87171, #fbbf24, #4ade80)';
-  document.getElementById('timer-txt').textContent = G.timerVal + 's';
-}
-
-function timeOut() {
-  if (G.answered) return;
-  G.answered = true;
-  G.lives--;
-  G.streak = 0;
-  G.wrongCount++;
-
-  markButtons(-1); // -1 = timeout: only highlight correct
-  document.getElementById('hint-line').textContent = '⏰ Temps écoulé !';
-  popFeedback('⏰');
-  updateHUD();
-
-  if (G.lives <= 0) { setTimeout(showGameOver, 1700); return; }
-  setTimeout(renderQuestion, 1800);
-}
-
-function pick(idx) {
-  if (G.answered) return;
-  G.answered = true;
-  clearInterval(G.timerID);
-
-  const q       = G.questions[G.qIdx];
-  const chosen  = G.options[idx];
-  const correct = q.capital;
-  const ok      = chosen === correct;
-
-  markButtons(ok ? idx : -1, idx);
-
-  if (ok) {
-    G.streak++;
-    if (G.streak > G.maxStreak) G.maxStreak = G.streak;
-    const timeBonus   = Math.round(G.timerVal * 2.5);
-    const multiplier  = G.streak >= 5 ? 3 : G.streak >= 3 ? 2 : 1;
-    const gained      = (100 + timeBonus) * multiplier;
-    G.score += gained;
-
-    let hint = `+${gained} pts`;
-    if (multiplier > 1) hint += `  ×${multiplier} combo 🔥`;
-    document.getElementById('hint-line').textContent = hint;
-    popFeedback('✅');
-  } else {
-    G.lives--;
-    G.streak = 0;
-    G.wrongCount++;
-    document.getElementById('hint-line').textContent = `Bonne réponse : ${correct}`;
-    popFeedback('❌');
-  }
-
-  updateHUD();
-  G.qIdx++;
-
-  if (!ok && G.lives <= 0) { setTimeout(showGameOver, 1800); return; }
-  setTimeout(renderQuestion, ok ? 950 : 1900);
-}
-
-function markButtons(correctIdx, wrongIdx = -2) {
-  document.querySelectorAll('.opt-btn').forEach((btn, i) => {
-    btn.disabled = true;
-    const cap = G.options[i];
-    if (cap === G.questions[G.qIdx].capital) btn.classList.add('correct');
-    else if (i === wrongIdx) btn.classList.add('wrong');
-  });
-}
-
-// ── END LEVEL ────────────────────────────────────────────────────────────────
-
-function endLevel() {
-  clearInterval(G.timerID);
-  const lv    = LEVELS[G.lvlIdx];
-  const total = G.questions.length;
-  const right = total - G.wrongCount;
-  const s     = calcStars(G.wrongCount, total);
-  const acc   = Math.round(right / total * 100);
-
-  // Save
-  const prev = progress[G.lvlIdx] || { stars: 0, best: 0 };
-  progress[G.lvlIdx] = {
-    stars: Math.max(prev.stars, s),
-    best:  Math.max(prev.best, G.score),
-  };
-  save();
-
-  const msgs = {
-    3: ["Parfait ! 🌟",    "Score sans faute, tu es imbattable !"],
-    2: ["Très bien ! 👏",  "Belle maîtrise de la géographie !"],
-    1: ["Bien joué ! 😊",  "Tu progresses, continue ainsi !"],
-  };
-  const [title, sub] = msgs[s];
-  const hasNext = G.lvlIdx < LEVELS.length - 1;
-
-  document.getElementById('result-content').innerHTML = `
-    <span class="res-emoji">${lv.emoji}</span>
-    <h2 class="res-title">${title}</h2>
-    <p class="res-sub">${sub}<br><small style="opacity:.6">Niveau <strong>${lv.name}</strong> terminé !</small></p>
-    <div class="res-stars">
-      ${[1,2,3].map((n,i) => `
-        <span class="res-star" style="animation-delay:${i*0.2}s;opacity:${n<=s?1:.15};filter:${n<=s?'none':'grayscale(1)'}">⭐</span>
-      `).join('')}
     </div>
-    <div class="stats-row">
-      <div class="stat-box"><div class="stat-val">${G.score}</div><div class="stat-lbl">Score total</div></div>
-      <div class="stat-box"><div class="stat-val">${right}/${total}</div><div class="stat-lbl">Bonnes réponses</div></div>
-      <div class="stat-box"><div class="stat-val">${acc}%</div><div class="stat-lbl">Précision</div></div>
+  </nav>
+
+  <!-- ── MOBILE MENU ── -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-inner">
+      <ul class="mobile-menu-links">
+        <li><a href="#services">Nos soins</a></li>
+        <li><a href="#equipe">L'équipe</a></li>
+        <li><a href="#tarifs">Tarifs</a></li>
+        <li><a href="#blog">Conseils</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#rdv" class="btn btn-primary" style="width:100%; justify-content:center">Prendre RDV en ligne</a>
     </div>
-    ${G.maxStreak >= 3 ? `<p style="color:#f97316;font-weight:700;margin-bottom:20px">Meilleure série : 🔥 ${G.maxStreak} d'affilée !</p>` : ''}
-    <div class="btns">
-      <button class="btn btn-ghost" onclick="startLevel(${G.lvlIdx})">🔄 Rejouer</button>
-      ${hasNext
-        ? `<button class="btn btn-primary" onclick="startLevel(${G.lvlIdx+1})">Niveau suivant →</button>`
-        : `<button class="btn btn-primary" onclick="renderHome()">🏠 Accueil</button>`
+  </div>
+
+  <!-- ── HERO ── -->
+  <section class="hero" id="accueil">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge" data-aos>
+            <i class="fas fa-award"></i>
+            Spécialistes pédiatrie depuis 2025
+          </div>
+          <h1>Bouger, grandir,<br><span>s'épanouir ensemble</span></h1>
+          <p class="hero-sub">
+            Cabinet de kinésithérapie 100% dédié aux nourrissons, enfants et adolescents. Prise en charge motrice, respiratoire, neurologique et orthopédique dans un environnement ludique et rassurant.
+          </p>
+          <div class="hero-actions">
+            <a href="#rdv" class="btn btn-primary">
+              <i class="fas fa-calendar-check"></i>
+              Prendre rendez-vous
+            </a>
+            <a href="#services" class="btn btn-secondary">
+              <i class="fas fa-stethoscope"></i>
+              Découvrir nos soins
+            </a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-num">4</div>
+              <div class="stat-label">Kinés spécialisés</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">0–18</div>
+              <div class="stat-label">Ans pris en charge</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">100%</div>
+              <div class="stat-label">Pédiatrie exclusive</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">SS</div>
+              <div class="stat-label">Remboursement assuré</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-img-wrap">
+            <img src="assets/images/service3.jpg" alt="Kinésithérapeute avec enfant" loading="lazy">
+          </div>
+          <div class="hero-card card-top-left" data-aos="fade-right">
+            <div class="hero-card-icon blue"><i class="fas fa-lungs"></i></div>
+            <div class="hero-card-text">
+              <div class="card-title">Kiné respiratoire</div>
+              <div class="card-sub">Bronchiolites · Asthme · ORL</div>
+            </div>
+          </div>
+          <div class="hero-card card-bottom-right" data-aos="fade-left">
+            <div class="hero-card-icon green"><i class="fas fa-brain"></i></div>
+            <div class="hero-card-text">
+              <div class="card-title">Neuro-motricité</div>
+              <div class="card-sub">Retards moteurs · Tonus</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PARTENAIRES ── -->
+  <section class="partners">
+    <div class="container">
+      <p class="partners-label">Partenaires prescripteurs</p>
+      <div class="partners-row">
+        <div class="partner-item"><i class="fas fa-hospital"></i> Pédiatres</div>
+        <div class="partner-item"><i class="fas fa-baby"></i> Maternités</div>
+        <div class="partner-item"><i class="fas fa-user-nurse"></i> Sages-femmes</div>
+        <div class="partner-item"><i class="fas fa-school"></i> Écoles maternelles</div>
+        <div class="partner-item"><i class="fas fa-hands-helping"></i> PMI / ONE</div>
+        <div class="partner-item"><i class="fas fa-comments"></i> Orthophonistes</div>
+        <div class="partner-item"><i class="fas fa-shield-alt"></i> Mutuelles</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHY US ── -->
+  <section class="why-us">
+    <div class="container">
+      <div class="why-grid">
+        <div class="why-img-wrap" data-aos="fade-right">
+          <div class="why-img-main">
+            <img src="assets/images/about.jpg" alt="Cabinet pédiatrique" loading="lazy">
+          </div>
+          <div class="why-badge-wrap">
+            <div class="why-badge-icon"><i class="fas fa-award"></i></div>
+            <div class="why-badge-text">
+              <div class="title">Spécialisation exclusive</div>
+              <div class="sub">100% pédiatrie · 0 à 18 ans</div>
+            </div>
+          </div>
+        </div>
+
+        <div data-aos="fade-left">
+          <span class="section-label"><i class="fas fa-question-circle"></i> Pourquoi nous choisir</span>
+          <h2 class="section-title">Un cabinet pensé pour votre enfant</h2>
+          <p class="section-sub">
+            En France, les kinésithérapeutes exclusivement spécialisés en pédiatrie sont rares. Les familles peinent à trouver des praticiens formés aux pathologies de l'enfant. KinéPédi comble ce manque.
+          </p>
+          <div class="why-points">
+            <div class="why-point">
+              <div class="why-point-icon blue"><i class="fas fa-graduation-cap"></i></div>
+              <div class="why-point-body">
+                <div class="title">Expertise pointue & formations spécifiques</div>
+                <p>Neuro-motricité, plagiocéphalie, kiné respiratoire — nos 4 praticiens sont formés aux pathologies exclusives de l'enfant.</p>
+              </div>
+            </div>
+            <div class="why-point">
+              <div class="why-point-icon green"><i class="fas fa-gamepad"></i></div>
+              <div class="why-point-body">
+                <div class="title">Environnement ludique & sécurisé</div>
+                <p>Locaux colorés, matériel adapté et jeux thérapeutiques pour une expérience positive — même pour les plus jeunes.</p>
+              </div>
+            </div>
+            <div class="why-point">
+              <div class="why-point-icon orange"><i class="fas fa-clock"></i></div>
+              <div class="why-point-body">
+                <div class="title">Prise en charge précoce = meilleurs résultats</div>
+                <p>Intervenir tôt fait toute la différence. Bilans dès les premiers mois, suivi personnalisé et accompagnement parental.</p>
+              </div>
+            </div>
+            <div class="why-point">
+              <div class="why-point-icon purple"><i class="fas fa-users"></i></div>
+              <div class="why-point-body">
+                <div class="title">Accompagnement des familles</div>
+                <p>Les parents font partie du soin. Ateliers, conseils personnalisés et éducation thérapeutique à chaque étape.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SERVICES ── -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-header">
+        <span class="section-label green"><i class="fas fa-stethoscope"></i> Nos prestations</span>
+        <h2 class="section-title">Tous nos soins pédiatriques</h2>
+        <p class="section-sub">De la naissance à l'adolescence, nous couvrons l'ensemble des pathologies pédiatriques avec une approche globale et bienveillante.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card" data-aos>
+          <img src="assets/images/service1.jpg" alt="Kiné respiratoire pédiatrique" class="service-img" loading="lazy">
+          <div class="service-body">
+            <span class="service-tag blue"><i class="fas fa-lungs"></i> Respiratoire</span>
+            <h3 class="service-title">Kinésithérapie respiratoire</h3>
+            <p class="service-desc">Prise en charge des bronchiolites, asthme, mucoviscidose et infections ORL récurrentes. Techniques douces adaptées aux nourrissons et jeunes enfants.</p>
+            <a href="#rdv" class="service-link">Prendre RDV <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="service-card" data-aos>
+          <img src="assets/images/service2.jpg" alt="Éducation neuro-motrice" class="service-img" loading="lazy">
+          <div class="service-body">
+            <span class="service-tag green"><i class="fas fa-brain"></i> Neuro-motricité</span>
+            <h3 class="service-title">Éducation neuro-motrice</h3>
+            <p class="service-desc">Accompagnement des retards moteurs, troubles du tonus et de la coordination. Exercices ludiques pour stimuler le développement neurologique.</p>
+            <a href="#rdv" class="service-link">Prendre RDV <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="service-card" data-aos>
+          <img src="assets/images/service3.jpg" alt="Traitement plagiocéphalie" class="service-img" loading="lazy">
+          <div class="service-body">
+            <span class="service-tag orange"><i class="fas fa-baby"></i> Crânio-cervical</span>
+            <h3 class="service-title">Plagiocéphalie & torticolis</h3>
+            <p class="service-desc">Traitement des déformations crâniennes (tête plate) et torticolis congénital. Protocoles précoces pour des résultats optimaux dès les premiers mois.</p>
+            <a href="#rdv" class="service-link">Prendre RDV <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="service-card" data-aos>
+          <img src="assets/images/service4.jpg" alt="Bilan psychomoteur" class="service-img" loading="lazy">
+          <div class="service-body">
+            <span class="service-tag purple"><i class="fas fa-chart-line"></i> Développement</span>
+            <h3 class="service-title">Bilan psychomoteur</h3>
+            <p class="service-desc">Évaluation complète du développement global de l'enfant — motricité, équilibre, coordination et tonus. Dépistage précoce des troubles moteurs.</p>
+            <a href="#rdv" class="service-link">Prendre RDV <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="service-card" data-aos>
+          <div class="blog-img" style="background:linear-gradient(135deg,#FFF8E1,#FEF3C7)">🏥</div>
+          <div class="service-body">
+            <span class="service-tag yellow"><i class="fas fa-procedures"></i> Post-op</span>
+            <h3 class="service-title">Suivi post-opératoire</h3>
+            <p class="service-desc">Rééducation après chirurgie pédiatrique orthopédique, neurologique ou viscérale. Programme personnalisé pour une récupération optimale.</p>
+            <a href="#rdv" class="service-link">Prendre RDV <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="service-card" data-aos>
+          <div class="blog-img" style="background:linear-gradient(135deg,#FFF0F5,#FCE7F3)">👨‍👩‍👧</div>
+          <div class="service-body">
+            <span class="service-tag pink"><i class="fas fa-users"></i> Ateliers</span>
+            <h3 class="service-title">Ateliers parents</h3>
+            <p class="service-desc">Massage bébé, portage physiologique, postures d'éveil et conseils personnalisés. Des séances collectives en petits groupes pour partager et apprendre ensemble.</p>
+            <a href="#rdv" class="service-link">Prendre RDV <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SWOT ── -->
+  <section class="swot-section" id="forces">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:0;">
+        <span class="section-label orange"><i class="fas fa-shield-alt"></i> Notre analyse</span>
+        <h2 class="section-title">Pourquoi KinéPédi se démarque</h2>
+        <p class="section-sub" style="margin:0 auto">Un positionnement stratégique clair sur un marché à fort potentiel.</p>
+      </div>
+      <div class="swot-grid">
+        <div class="swot-card forces" data-aos>
+          <div class="swot-header">
+            <div class="swot-icon"><i class="fas fa-plus"></i></div>
+            <div class="swot-title">Nos forces</div>
+          </div>
+          <ul class="swot-list">
+            <li><i class="fas fa-circle"></i>Expertise pointue en pédiatrie (neuro-motricité, plagiocéphalie, kiné respiratoire)</li>
+            <li><i class="fas fa-circle"></i>Environnement adapté et ludique — locaux colorés, matériel sécurisé</li>
+            <li><i class="fas fa-circle"></i>Approche globale incluant les parents dans le parcours de soin</li>
+            <li><i class="fas fa-circle"></i>4 praticiens complémentaires couvrant toutes les sous-spécialités</li>
+          </ul>
+        </div>
+
+        <div class="swot-card faiblesses" data-aos>
+          <div class="swot-header">
+            <div class="swot-icon"><i class="fas fa-minus"></i></div>
+            <div class="swot-title">Nos défis</div>
+          </div>
+          <ul class="swot-list">
+            <li><i class="fas fa-circle"></i>Investissement initial important en matériel spécialisé</li>
+            <li><i class="fas fa-circle"></i>Consultations plus chronophages qu'en kinésithérapie classique</li>
+            <li><i class="fas fa-circle"></i>Phase d'installation et de constitution du réseau prescripteurs</li>
+          </ul>
+        </div>
+
+        <div class="swot-card opportunites" data-aos>
+          <div class="swot-header">
+            <div class="swot-icon"><i class="fas fa-arrow-up"></i></div>
+            <div class="swot-title">Opportunités</div>
+          </div>
+          <ul class="swot-list">
+            <li><i class="fas fa-circle"></i>Pénurie de kinés exclusivement spécialisés en pédiatrie</li>
+            <li><i class="fas fa-circle"></i>Demande croissante : bronchiolites, plagiocéphalies, scolioses</li>
+            <li><i class="fas fa-circle"></i>Réseau de prescripteurs (pédiatres, maternités, PMI, CAMSP)</li>
+            <li><i class="fas fa-circle"></i>Diversification : ateliers collectifs non conventionnés</li>
+          </ul>
+        </div>
+
+        <div class="swot-card menaces" data-aos>
+          <div class="swot-header">
+            <div class="swot-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="swot-title">Points de vigilance</div>
+          </div>
+          <ul class="swot-list">
+            <li><i class="fas fa-circle"></i>Cadre légal et nomenclatures en évolution</li>
+            <li><i class="fas fa-circle"></i>Concurrence potentielle de nouveaux installés</li>
+            <li><i class="fas fa-circle"></i>Pouvoir d'achat pour actes hors convention</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EQUIPE ── -->
+  <section class="team" id="equipe">
+    <div class="container">
+      <div class="team-header">
+        <span class="section-label purple"><i class="fas fa-user-md"></i> L'équipe</span>
+        <h2 class="section-title">Vos praticiens pédiatres</h2>
+        <p class="section-sub">Quatre kinésithérapeutes passionnés, spécialisés en pédiatrie, qui s'engagent chaque jour pour le bien-être de votre enfant.</p>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-card" data-aos>
+          <div class="team-img-wrap">
+            👨‍⚕️
+            <span class="team-badge">Kiné Resp.</span>
+          </div>
+          <div class="team-body">
+            <div class="team-name">Nidel Seoudi</div>
+            <div class="team-role">Expert Respiratoire</div>
+            <div class="team-desc">Spécialisé en kinésithérapie respiratoire pédiatrique. Formation en néonatologie et prise en charge des nouveau-nés.</div>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos>
+          <div class="team-img-wrap" style="background:linear-gradient(135deg,#EDFAF4,#D0F5E8)">
+            👨‍⚕️
+            <span class="team-badge">Neuro-moteur</span>
+          </div>
+          <div class="team-body">
+            <div class="team-name">Mohamed</div>
+            <div class="team-role">Expert Neuro-motricité</div>
+            <div class="team-desc">Spécialisé en rééducation neuro-développementale. Accompagnement des retards moteurs et troubles du tonus.</div>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos>
+          <div class="team-img-wrap" style="background:linear-gradient(135deg,#FFF3EF,#FFE5D9)">
+            👨‍⚕️
+            <span class="team-badge">Ortho-pédiatrie</span>
+          </div>
+          <div class="team-body">
+            <div class="team-name">Tom</div>
+            <div class="team-role">Orthopédie Pédiatrique</div>
+            <div class="team-desc">Spécialiste en plagiocéphalie, torticolis et scoliose de l'adolescent. Suivi post-opératoire pédiatrique.</div>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos>
+          <div class="team-img-wrap" style="background:linear-gradient(135deg,#F5F0FF,#EDE7FF)">
+            👨‍⚕️
+            <span class="team-badge">Bilans & Prévention</span>
+          </div>
+          <div class="team-body">
+            <div class="team-name">Maxime</div>
+            <div class="team-role">Développement & Prévention</div>
+            <div class="team-desc">Expert en bilans psychomoteurs et prévention. Animation des ateliers parents et conseils en développement de l'enfant.</div>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TARIFS ── -->
+  <section class="tarifs" id="tarifs">
+    <div class="container">
+      <div class="tarifs-header">
+        <span class="section-label"><i class="fas fa-euro-sign"></i> Tarifs transparents</span>
+        <h2 class="section-title">Des soins accessibles à tous</h2>
+        <p class="section-sub">Nos séances sont remboursées par la Sécurité Sociale et les mutuelles complémentaires. Pas de mauvaise surprise.</p>
+      </div>
+
+      <div class="tarifs-grid">
+        <div class="tarif-card" data-aos>
+          <div class="tarif-icon"><i class="fas fa-lungs"></i></div>
+          <div class="tarif-name">Séance individuelle</div>
+          <div class="tarif-price">
+            <span class="tarif-amount">60€</span>
+            <span class="tarif-unit">/ séance</span>
+          </div>
+          <div class="tarif-remb"><i class="fas fa-check-circle"></i> Remboursé SS + mutuelle</div>
+          <ul class="tarif-features">
+            <li><i class="fas fa-check"></i> 45 min en moyenne</li>
+            <li><i class="fas fa-check"></i> Compte-rendu pour médecin</li>
+            <li><i class="fas fa-check"></i> Conseils aux parents inclus</li>
+            <li><i class="fas fa-check"></i> Sur prescription médicale</li>
+          </ul>
+          <a href="#rdv" class="btn tarif-btn">Réserver une séance</a>
+        </div>
+
+        <div class="tarif-card featured" data-aos>
+          <div class="tarif-featured-label">⭐ Le plus choisi</div>
+          <div class="tarif-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="tarif-name">Pass 5 séances</div>
+          <div class="tarif-price">
+            <span class="tarif-amount">280€</span>
+            <span class="tarif-unit">/ 5 séances</span>
+          </div>
+          <div class="tarif-remb"><i class="fas fa-check-circle"></i> Remboursé SS + mutuelle</div>
+          <ul class="tarif-features">
+            <li><i class="fas fa-check"></i> Économie de 20€</li>
+            <li><i class="fas fa-check"></i> Suivi personnalisé continu</li>
+            <li><i class="fas fa-check"></i> Priorité de créneau</li>
+            <li><i class="fas fa-check"></i> Bilan mi-parcours inclus</li>
+          </ul>
+          <a href="#rdv" class="btn btn-primary tarif-btn">Choisir ce pass</a>
+        </div>
+
+        <div class="tarif-card" data-aos>
+          <div class="tarif-icon"><i class="fas fa-users"></i></div>
+          <div class="tarif-name">Atelier collectif</div>
+          <div class="tarif-price">
+            <span class="tarif-amount">30€</span>
+            <span class="tarif-unit">/ atelier</span>
+          </div>
+          <div class="tarif-remb"><i class="fas fa-info-circle"></i> Acte non conventionné</div>
+          <ul class="tarif-features">
+            <li><i class="fas fa-check"></i> Groupes de 4-6 familles</li>
+            <li><i class="fas fa-check"></i> Massage bébé, portage</li>
+            <li><i class="fas fa-check"></i> Questions-réponses libres</li>
+            <li><i class="fas fa-check"></i> Sans prescription requise</li>
+          </ul>
+          <a href="#rdv" class="btn tarif-btn">S'inscrire à un atelier</a>
+        </div>
+      </div>
+
+      <p style="text-align:center; margin-top:32px; color:rgba(255,255,255,0.6); font-size:0.85rem;">
+        <i class="fas fa-info-circle"></i>&nbsp;
+        Tiers payant disponible pour les bénéficiaires CMU-C et ACS. Contactez-nous pour toute situation particulière.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── TEMOIGNAGES ── -->
+  <section class="temoignages">
+    <div class="container">
+      <div class="temoignages-header">
+        <span class="section-label"><i class="fas fa-star"></i> Avis parents</span>
+        <h2 class="section-title">Ils nous font confiance</h2>
+        <p class="section-sub">Des familles qui ont fait confiance à notre équipe pour le bien-être de leurs enfants.</p>
+      </div>
+
+      <div class="temo-grid">
+        <div class="temo-card" data-aos>
+          <div class="temo-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="temo-text">
+            « Notre bébé avait une plagiocéphalie sévère à 3 mois. Après seulement 8 séances avec l'équipe, la déformation avait nettement diminué. L'approche est douce, les kinés expliquent tout aux parents. Un cabinet exceptionnel. »
+          </p>
+          <div class="temo-author">
+            <div class="temo-avatar">SL</div>
+            <div>
+              <div class="temo-name">Sophie L.</div>
+              <div class="temo-info">Maman de Thomas, 5 mois · Plagiocéphalie</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="temo-card" data-aos>
+          <div class="temo-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="temo-text">
+            « Mon fils de 2 ans avait des bronchiolites à répétition. La kinésithérapie respiratoire a changé sa vie — et la nôtre ! Les praticiens sont d'une patience incroyable avec les tout-petits. Je recommande vivement. »
+          </p>
+          <div class="temo-author">
+            <div class="temo-avatar">MR</div>
+            <div>
+              <div class="temo-name">Marine R.</div>
+              <div class="temo-info">Maman d'Hugo, 2 ans · Bronchiolites</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="temo-card" data-aos>
+          <div class="temo-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="temo-text">
+            « Ma fille de 7 ans avait un retard moteur détecté tardivement. En 3 mois de suivi avec Maxime, elle a rattrapé son retard et retrouvé confiance en elle. L'atelier parents m'a aussi beaucoup aidé. Merci infiniment ! »
+          </p>
+          <div class="temo-author">
+            <div class="temo-avatar">AC</div>
+            <div>
+              <div class="temo-name">Audrey C.</div>
+              <div class="temo-info">Maman de Léa, 7 ans · Retard moteur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:40px;">
+        <div style="display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:16px 24px; box-shadow:var(--shadow);">
+          <div style="display:flex; gap:3px; color:#FFB300;">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <span style="font-weight:800; font-size:1.1rem;">4.9/5</span>
+          <span style="color:var(--text-light); font-size:0.85rem;">basé sur 47 avis Google</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BLOG ── -->
+  <section class="blog" id="blog">
+    <div class="container">
+      <div class="blog-header">
+        <div>
+          <span class="section-label orange"><i class="fas fa-book-open"></i> Blog santé</span>
+          <h2 class="section-title" style="margin-bottom:0">Conseils pour parents</h2>
+        </div>
+        <a href="#blog" class="btn btn-secondary">Tous les articles</a>
+      </div>
+
+      <div class="blog-grid">
+        <div class="blog-card blog-card-main" data-aos>
+          <div class="blog-img" style="font-size:4rem">🫁</div>
+          <div class="blog-body">
+            <span class="blog-cat">Kiné respiratoire</span>
+            <h3 class="blog-title">Bronchiolite du nourrisson : quand et comment la kiné respiratoire aide votre bébé</h3>
+            <p class="blog-excerpt">La bronchiolite touche près de 500 000 nourrissons chaque hiver en France. La kinésithérapie respiratoire pédiatrique reste une des approches les plus efficaces pour aider votre bébé à mieux respirer. Décryptage complet avec nos experts.</p>
+            <div class="blog-meta">
+              <span><i class="fas fa-user"></i> Nidel Seoudi</span>
+              <span><i class="fas fa-calendar"></i> Décembre 2025</span>
+              <span><i class="fas fa-clock"></i> 6 min de lecture</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="blog-card" data-aos>
+          <div class="blog-img" style="font-size:3rem">👶</div>
+          <div class="blog-body">
+            <span class="blog-cat">Plagiocéphalie</span>
+            <h3 class="blog-title">Tête plate de bébé : faut-il vraiment s'inquiéter ?</h3>
+            <p class="blog-excerpt">La plagiocéphalie positionnnelle est de plus en plus fréquente. On fait le point sur les signes d'alerte et les solutions.</p>
+            <div class="blog-meta">
+              <span><i class="fas fa-user"></i> Tom</span>
+              <span><i class="fas fa-clock"></i> 4 min</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="blog-card" data-aos>
+          <div class="blog-img" style="font-size:3rem">🧠</div>
+          <div class="blog-body">
+            <span class="blog-cat">Développement</span>
+            <h3 class="blog-title">Les étapes clés du développement moteur de 0 à 2 ans</h3>
+            <p class="blog-excerpt">Saisir, ramper, marcher... Notre guide complet des acquisitions motrices pour accompagner votre enfant.</p>
+            <div class="blog-meta">
+              <span><i class="fas fa-user"></i> Maxime</span>
+              <span><i class="fas fa-clock"></i> 5 min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RDV & CONTACT ── -->
+  <section class="rdv-section" id="rdv">
+    <div class="container">
+      <div class="rdv-inner" id="contact">
+        <div class="rdv-info" data-aos="fade-right">
+          <span class="section-label"><i class="fas fa-calendar-check"></i> Prendre rendez-vous</span>
+          <h2 class="section-title">Prenez soin de votre enfant dès aujourd'hui</h2>
+          <p class="section-sub">
+            Disponibles du lundi au vendredi de 8h à 19h, et le samedi matin sur rendez-vous. Prise en charge urgente possible pour les kinés respiratoires en saison hivernale.
+          </p>
+
+          <div class="contact-items">
+            <div class="contact-item">
+              <div class="contact-item-icon blue"><i class="fas fa-phone"></i></div>
+              <div>
+                <div class="contact-item-label">Téléphone</div>
+                <div class="contact-item-value">01 23 45 67 89</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item-icon green"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <div class="contact-item-label">Adresse</div>
+                <div class="contact-item-value">12 rue des Enfants, 75001 Paris</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item-icon orange"><i class="fas fa-envelope"></i></div>
+              <div>
+                <div class="contact-item-label">Email</div>
+                <div class="contact-item-value">contact@kinepedi.fr</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:20px;">
+            <p style="font-size:0.85rem; font-weight:700; color:var(--text-light); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Suivez-nous</p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <a href="#" class="social-btn instagram"><i class="fab fa-instagram"></i> @kinepedi</a>
+              <a href="#" class="social-btn facebook"><i class="fab fa-facebook-f"></i> KinéPédi</a>
+            </div>
+          </div>
+
+          <div style="background:var(--primary-light); border-radius:var(--radius); padding:16px 20px; border:1px solid rgba(43,127,212,0.2);">
+            <p style="font-size:0.85rem; color:var(--primary); font-weight:700; margin-bottom:4px;"><i class="fas fa-info-circle"></i> Urgence respiratoire</p>
+            <p style="font-size:0.82rem; color:var(--primary-dark);">En cas de bronchiolite sévère en saison hivernale, un créneau en urgence est disponible. Appelez-nous directement.</p>
+          </div>
+        </div>
+
+        <div data-aos="fade-left">
+          <div class="rdv-form-wrap">
+            <h3 class="form-title">Demande de rendez-vous</h3>
+            <p class="form-sub">Nous vous répondons sous 24h par email ou téléphone.</p>
+
+            <form id="rdvForm" onsubmit="handleSubmit(event)">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="parentName">Nom du parent *</label>
+                  <input type="text" id="parentName" placeholder="Dupont" required>
+                </div>
+                <div class="form-group">
+                  <label for="parentFirstname">Prénom *</label>
+                  <input type="text" id="parentFirstname" placeholder="Marie" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email">Email *</label>
+                  <input type="email" id="email" placeholder="marie@email.com" required>
+                </div>
+                <div class="form-group">
+                  <label for="phone">Téléphone *</label>
+                  <input type="tel" id="phone" placeholder="06 12 34 56 78" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="childAge">Âge de l'enfant *</label>
+                  <input type="text" id="childAge" placeholder="Ex: 6 mois / 3 ans" required>
+                </div>
+                <div class="form-group">
+                  <label for="motif">Motif de consultation *</label>
+                  <select id="motif" required>
+                    <option value="">Choisir...</option>
+                    <option>Kiné respiratoire (bronchiolite, asthme)</option>
+                    <option>Plagiocéphalie / Torticolis</option>
+                    <option>Retard moteur / Neuro-motricité</option>
+                    <option>Bilan psychomoteur</option>
+                    <option>Suivi post-opératoire</option>
+                    <option>Atelier parents</option>
+                    <option>Autre</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="message">Message complémentaire</label>
+                <textarea id="message" placeholder="Précisez votre situation, avez-vous une ordonnance ? Des disponibilités préférées ?"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary form-submit">
+                <i class="fas fa-paper-plane"></i>
+                Envoyer ma demande de RDV
+              </button>
+              <p class="form-note"><i class="fas fa-lock"></i> Vos données sont confidentielles et protégées (RGPD)</p>
+            </form>
+
+            <div id="formSuccess" style="display:none; text-align:center; padding:32px;">
+              <div style="font-size:3rem; margin-bottom:12px;">✅</div>
+              <h3 style="margin-bottom:8px;">Demande envoyée !</h3>
+              <p style="color:var(--text-light); font-size:0.9rem;">Nous vous recontactons sous 24h pour confirmer votre rendez-vous.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MAP ── -->
+  <div class="map-section">
+    <div class="map-placeholder">
+      <i class="fas fa-map-marker-alt"></i>
+      <h3>Cabinet KinéPédi</h3>
+      <p>12 rue des Enfants, 75001 Paris<br>Métro Châtelet · Parking disponible</p>
+      <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:16px; display:inline-flex;">
+        <i class="fas fa-directions"></i> Itinéraire
+      </a>
+    </div>
+  </div>
+
+  <!-- ── CTA BANNER ── -->
+  <section class="cta-banner">
+    <div class="container" style="position:relative;z-index:1">
+      <h2>Votre enfant mérite le meilleur suivi</h2>
+      <p>Rejoignez les familles qui nous font confiance. Premier rendez-vous possible sous 48h.</p>
+      <div class="cta-actions">
+        <a href="#rdv" class="btn btn-white"><i class="fas fa-calendar-check"></i> Prendre rendez-vous</a>
+        <a href="tel:0123456789" class="btn" style="background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3);">
+          <i class="fas fa-phone"></i> 01 23 45 67 89
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">
+            <div class="footer-logo-icon"><i class="fas fa-child"></i></div>
+            <span class="footer-logo-text">KinéPédi</span>
+          </div>
+          <p class="footer-desc">
+            Cabinet de kinésithérapie 100% pédiatrique. Spécialistes de la santé de l'enfant de 0 à 18 ans. Un environnement ludique, des soins d'excellence.
+          </p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="Google"><i class="fab fa-google"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Nos soins</div>
+          <ul class="footer-links">
+            <li><a href="#services">Kiné respiratoire</a></li>
+            <li><a href="#services">Neuro-motricité</a></li>
+            <li><a href="#services">Plagiocéphalie</a></li>
+            <li><a href="#services">Bilan psychomoteur</a></li>
+            <li><a href="#services">Suivi post-opératoire</a></li>
+            <li><a href="#services">Ateliers parents</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Informations</div>
+          <ul class="footer-links">
+            <li><a href="#equipe">Notre équipe</a></li>
+            <li><a href="#tarifs">Tarifs & remboursements</a></li>
+            <li><a href="#blog">Blog santé enfant</a></li>
+            <li><a href="#rdv">Prendre rendez-vous</a></li>
+            <li><a href="#">Mentions légales</a></li>
+            <li><a href="#">Politique de confidentialité</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i> 12 rue des Enfants<br>75001 Paris</div>
+          <div class="footer-contact-item"><i class="fas fa-phone"></i> 01 23 45 67 89</div>
+          <div class="footer-contact-item"><i class="fas fa-envelope"></i> contact@kinepedi.fr</div>
+          <div class="footer-contact-item"><i class="fas fa-clock"></i> Lun–Ven : 8h–19h<br>Sam : 8h–12h</div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 KinéPédi. Tous droits réservés.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Mentions légales</a>
+          <a href="#">CGU</a>
+          <a href="#">RGPD</a>
+          <a href="#">Accessibilité</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── FLOATING RDV BUTTON ── -->
+  <div class="floating-rdv">
+    <button class="floating-btn" onclick="scrollToRDV()">
+      <i class="fas fa-calendar-check"></i>
+      <span>Prendre RDV</span>
+    </button>
+  </div>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 80) {
+        navbar.style.boxShadow = '0 4px 24px rgba(0,0,0,0.1)';
+      } else {
+        navbar.style.boxShadow = 'none';
       }
-    </div>
-  `;
+    });
 
-  showScreen('result');
-  if (s >= 2) fireConfetti();
-}
+    // Burger menu
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    burger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu || e.target.tagName === 'A') {
+        mobileMenu.classList.remove('open');
+      }
+    });
 
-function showGameOver() {
-  clearInterval(G.timerID);
-  const lv = LEVELS[G.lvlIdx];
-  const answered = G.qIdx;
-  const total    = G.questions.length;
+    // Scroll to RDV
+    function scrollToRDV() {
+      document.getElementById('rdv').scrollIntoView({ behavior: 'smooth' });
+    }
 
-  document.getElementById('gameover-content').innerHTML = `
-    <span style="font-size:5rem;display:block;margin-bottom:18px;animation:bounceIn .6s cubic-bezier(.34,1.56,.64,1)">💔</span>
-    <h2 style="font-size:2.4rem;font-weight:900;margin-bottom:8px">Game Over</h2>
-    <p style="color:rgba(255,255,255,.55);margin-bottom:32px">
-      Plus de vies au niveau <strong style="color:${lv.color}">${lv.name}</strong>
-    </p>
-    <div class="stats-row" style="margin-bottom:32px">
-      <div class="stat-box"><div class="stat-val">${G.score}</div><div class="stat-lbl">Score</div></div>
-      <div class="stat-box"><div class="stat-val">${answered}/${total}</div><div class="stat-lbl">Répondues</div></div>
-      <div class="stat-box"><div class="stat-val">${G.maxStreak}</div><div class="stat-lbl">Meilleure série</div></div>
-    </div>
-    <div class="btns">
-      <button class="btn btn-ghost" onclick="renderHome()">🏠 Accueil</button>
-      <button class="btn btn-primary" onclick="startLevel(${G.lvlIdx})">🔄 Réessayer</button>
-    </div>
-  `;
-  showScreen('gameover');
-}
+    // Form submission
+    function handleSubmit(e) {
+      e.preventDefault();
+      document.getElementById('rdvForm').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+    // Simple AOS (Animate On Scroll)
+    const aosElements = document.querySelectorAll('[data-aos]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('aos-animate');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-// Étoiles de fond
-(function() {
-  const wrap = document.getElementById('stars');
-  for (let i = 0; i < 120; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const sz = Math.random() * 2 + 0.5;
-    s.style.cssText = `
-      left:${Math.random()*100}vw;
-      top:${Math.random()*100}vh;
-      width:${sz}px; height:${sz}px;
-      opacity:${Math.random()*.6};
-      --dur:${2+Math.random()*4}s;
-      animation-delay:${Math.random()*4}s;
-    `;
-    wrap.appendChild(s);
-  }
-})();
+    aosElements.forEach((el, i) => {
+      el.style.transitionDelay = `${(i % 4) * 0.1}s`;
+      observer.observe(el);
+    });
 
-renderHome();
-</script>
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        if (window.scrollY >= section.offsetTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.style.color = link.getAttribute('href') === `#${current}` ? 'var(--primary)' : '';
+      });
+    });
+  </script>
 </body>
 </html>
