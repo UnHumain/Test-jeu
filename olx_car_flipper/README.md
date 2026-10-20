@@ -5,19 +5,67 @@ entre **500 € et 1400 €** (prix en RON convertis automatiquement), les fait 
 avec un prompt d'expert en achat-revente, mémorise tout en SQLite et vous alerte dès qu'une
 annonce obtient **une note > 8/10 et une marge nette estimée ≥ 200 €**.
 
-## Installation
+## Démarrage rapide
+
+### 1. Installer les dépendances
+
+Prérequis : Python 3.10 ou plus récent.
 
 ```bash
 cd olx_car_flipper
-python3 -m venv .venv && source .venv/bin/activate   # optionnel mais recommandé
+
+# (optionnel mais recommandé) environnement virtuel
+python3 -m venv .venv
+source .venv/bin/activate          # Windows : .venv\Scripts\activate
+
 pip install -r requirements.txt
-python main.py --top          # 1er lancement : crée .env à partir de .env.example
 ```
 
-Ouvrez ensuite `.env` et renseignez au minimum `ANTHROPIC_API_KEY`.
-Le fichier `.env` est ignoré par git : vos clés ne seront jamais commitées.
+Cela installe `requests`, `beautifulsoup4`, `anthropic` et `python-dotenv`.
 
-## Utilisation
+### 2. Configurer le fichier `.env`
+
+Créez votre `.env` à partir du modèle fourni :
+
+```bash
+cp .env.example .env               # Windows : copy .env.example .env
+```
+
+(Si vous oubliez cette étape, le premier `python main.py` le crée automatiquement.)
+
+Ouvrez `.env` dans un éditeur et renseignez :
+
+| Variable | Obligatoire | Description |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | ✅ | Votre clé API Anthropic (https://console.anthropic.com → API Keys) |
+| `TELEGRAM_BOT_TOKEN` | ❌ | Token du bot Telegram (voir « Notifications » plus bas) |
+| `TELEGRAM_CHAT_ID` | ❌ | ID de la conversation qui recevra les alertes |
+| `PRICE_MIN_EUR` / `PRICE_MAX_EUR` | ❌ | Fourchette de prix recherchée (500-1400 € par défaut) |
+| `CHECK_INTERVAL_MINUTES` | ❌ | Fréquence de vérification (10 min par défaut) |
+| `ALERT_MIN_SCORE` / `ALERT_MIN_MARGIN_EUR` | ❌ | Seuils d'alerte (note > 8 et marge ≥ 200 € par défaut) |
+
+Exemple minimal :
+
+```ini
+ANTHROPIC_API_KEY=<votre_cle_anthropic>
+TELEGRAM_BOT_TOKEN=<token_donne_par_BotFather>
+TELEGRAM_CHAT_ID=<votre_chat_id>
+```
+
+🔒 Le fichier `.env` est ignoré par git (`.gitignore`) : vos clés restent sur votre machine
+et ne seront jamais poussées sur GitHub. Seul `.env.example` (sans clés) est versionné.
+
+### 3. Lancer le bot
+
+```bash
+python main.py
+```
+
+Le bot tourne en continu : il interroge OLX toutes les 10 minutes, analyse les nouvelles
+annonces et vous alerte en cas d'opportunité. Arrêtez-le avec `Ctrl + C` ; la mémoire SQLite
+est conservée, il reprendra là où il s'était arrêté au prochain lancement.
+
+## Autres commandes
 
 | Commande | Effet |
 |---|---|
