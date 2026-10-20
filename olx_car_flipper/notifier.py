@@ -25,7 +25,11 @@ class Notifier:
         self.opportunities_file = settings.log_dir / "opportunites.log"
 
     def is_opportunity(self, analysis: Analysis) -> bool:
-        return analysis.score > self.s.alert_min_score and analysis.net_margin_eur >= self.s.alert_min_margin_eur
+        return (
+            analysis.passes_red_flags
+            and analysis.score > self.s.alert_min_score
+            and analysis.net_margin_eur >= self.s.alert_min_margin_eur
+        )
 
     def notify(self, listing: Listing, analysis: Analysis) -> None:
         text = self._format_plain(listing, analysis)
@@ -69,18 +73,21 @@ class Notifier:
         alerts = "\n".join(f"   ⚠ {x}" for x in d.get("signaux_alerte", [])) or "   (aucun)"
         strengths = "\n".join(f"   ✓ {x}" for x in d.get("points_forts", [])) or "   (aucun)"
         questions = "\n".join(f"   ? {x}" for x in d.get("questions_au_vendeur", [])) or "   (aucune)"
+        arguments = "\n".join(f"   → {x}" for x in d.get("arguments_negociation", [])) or "   (aucun)"
         return (
             f"🚗 {listing.title}\n"
             f"   {d.get('vehicule', '')}\n"
             f"📍 {listing.location}\n"
             f"💶 Prix affiché : {listing.price_value} {listing.currency} (≈ {listing.price_eur or 0:.0f} €)\n"
-            f"⭐ Note : {a.score:.1f}/10   |   Recommandation : {d.get('recommandation')}   |   Risque : {d.get('niveau_risque')}\n"
+            f"⭐ Note : {a.score:.1f}/10   |   Recommandation : {d.get('recommandation')}   |   Risque : {d.get('niveau_risque')}"
+            f"   |   Lignes rouges OK : {d.get('conforme_lignes_rouges')}\n"
             f"🎯 Achat cible : {d.get('prix_achat_cible_eur')} €   →   Revente : {d.get('prix_revente_estime_eur')} €"
             f"   (frais : {d.get('frais_estimes_eur')} €)\n"
             f"💰 MARGE NETTE ESTIMÉE : {a.net_margin_eur:.0f} €\n"
             f"📝 {d.get('resume', '')}\n"
             f"Points forts :\n{strengths}\n"
             f"Signaux d'alerte :\n{alerts}\n"
+            f"Arguments de négociation :\n{arguments}\n"
             f"Questions au vendeur :\n{questions}\n"
             f"🔗 {listing.url}"
         )
@@ -90,6 +97,8 @@ class Notifier:
         d = a.data
         e = html.escape
         alerts = "\n".join(f"⚠️ {e(x)}" for x in d.get("signaux_alerte", [])[:5])
+        arguments = "\n".join(f"🤝 {e(x)}" for x in d.get("arguments_negociation", [])[:4])
+        questions = "\n".join(f"❓ {e(x)}" for x in d.get("questions_au_vendeur", [])[:4])
         return (
             f"🚨 <b>OPPORTUNITÉ OLX</b> 🚨\n\n"
             f"🚗 <b>{e(listing.title)}</b>\n"
@@ -101,5 +110,7 @@ class Notifier:
             f"💰 <b>Marge nette : {a.net_margin_eur:.0f} €</b>\n\n"
             f"{e(d.get('resume', ''))}\n\n"
             f"{alerts}\n\n"
+            f"{arguments}\n\n"
+            f"{questions}\n\n"
             f'🔗 <a href="{e(listing.url)}">Voir l\'annonce</a>'
         )

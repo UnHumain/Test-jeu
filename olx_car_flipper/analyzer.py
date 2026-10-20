@@ -22,6 +22,11 @@ ANALYSIS_SCHEMA: dict[str, Any] = {
     "properties": {
         "vehicule": {"type": "string", "description": "Marque, modèle, année, motorisation identifiés"},
         "note_sur_10": {"type": "number", "description": "Note d'opportunité de 0 à 10"},
+        "conforme_lignes_rouges": {
+            "type": "string",
+            "enum": ["Oui", "Non"],
+            "description": "Oui si l'annonce ne déclenche AUCUNE ligne rouge, Non sinon",
+        },
         "prix_achat_cible_eur": {"type": "integer", "description": "Prix d'achat réaliste après négociation"},
         "prix_revente_estime_eur": {"type": "integer", "description": "Prix de revente réaliste en 2-4 semaines"},
         "frais_estimes_eur": {"type": "integer", "description": "Réparations + papiers + préparation"},
@@ -30,13 +35,15 @@ ANALYSIS_SCHEMA: dict[str, Any] = {
         "recommandation": {"type": "string", "enum": ["ACHETER", "NEGOCIER", "SURVEILLER", "PASSER"]},
         "points_forts": {"type": "array", "items": {"type": "string"}},
         "signaux_alerte": {"type": "array", "items": {"type": "string"}},
+        "arguments_negociation": {"type": "array", "items": {"type": "string"}},
         "questions_au_vendeur": {"type": "array", "items": {"type": "string"}},
         "resume": {"type": "string", "description": "Synthèse en 2-3 phrases"},
     },
     "required": [
-        "vehicule", "note_sur_10", "prix_achat_cible_eur", "prix_revente_estime_eur",
-        "frais_estimes_eur", "marge_nette_estimee_eur", "niveau_risque", "recommandation",
-        "points_forts", "signaux_alerte", "questions_au_vendeur", "resume",
+        "vehicule", "note_sur_10", "conforme_lignes_rouges", "prix_achat_cible_eur",
+        "prix_revente_estime_eur", "frais_estimes_eur", "marge_nette_estimee_eur", "niveau_risque",
+        "recommandation", "points_forts", "signaux_alerte", "arguments_negociation",
+        "questions_au_vendeur", "resume",
     ],
     "additionalProperties": False,
 }
@@ -54,6 +61,10 @@ class Analysis:
     @property
     def net_margin_eur(self) -> float:
         return float(self.data.get("marge_nette_estimee_eur", 0))
+
+    @property
+    def passes_red_flags(self) -> bool:
+        return self.data.get("conforme_lignes_rouges") == "Oui"
 
 
 class AnalysisError(Exception):
